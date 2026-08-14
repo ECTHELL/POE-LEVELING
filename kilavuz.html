@@ -1,0 +1,245 @@
+<meta charset="utf-8">
+<title>PoE Leveling — Kullanım Kılavuzu / User Guide</title>
+<style>
+  :root{
+    --bg:#0d0d10; --panel:#16161c; --panel2:#1d1d25; --border:#2a2a35;
+    --text:#e7e3d6; --muted:#8b8778; --gold:#c8aa6e; --gold-dim:#7a6a45;
+    --green:#6bbf80; --purple:#a06cd4; --blue:#4a9fd4; --orange:#f0a85a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:"Segoe UI",Roboto,system-ui,sans-serif;line-height:1.55;font-size:15px}
+  .wrap{max-width:920px;margin:0 auto;padding:24px 18px 60px}
+  header{text-align:center;padding:18px 0 6px}
+  h1{color:var(--gold);margin:0;font-size:1.7em;letter-spacing:.5px}
+  .sub{color:var(--muted);font-size:.9em;margin-top:4px}
+  h2{color:var(--gold);border-bottom:1px solid var(--border);padding-bottom:6px;margin:34px 0 12px;font-size:1.25em}
+  h2 .en{color:var(--muted);font-weight:400;font-size:.7em;margin-left:8px}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin:12px 0}
+  .biling{display:grid;grid-template-columns:1fr 1fr;gap:0}
+  .biling>div{padding:12px 16px}
+  .biling .tr{border-right:1px solid var(--border)}
+  .biling .lang{font-size:.72em;font-weight:700;letter-spacing:1px;color:var(--gold-dim);text-transform:uppercase;margin-bottom:6px}
+  .en-txt{color:#cfe0ea}
+  ol,ul{margin:6px 0 6px 0;padding-left:20px}
+  li{margin:5px 0}
+  table{width:100%;border-collapse:collapse;font-size:.92em;overflow:hidden;border-radius:10px}
+  .tblwrap{overflow-x:auto;border:1px solid var(--border);border-radius:10px;margin:12px 0}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+  th{background:var(--panel2);color:var(--gold);font-size:.85em;position:sticky;top:0}
+  tr:last-child td{border-bottom:none}
+  td:first-child{white-space:nowrap;font-weight:600}
+  .ic{font-size:1.05em}
+  .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.8em;font-weight:700;border:1px solid}
+  .b-v{background:#14231f;border-color:#4fb87a;color:#a9f0c6}
+  .b-g{background:#2a2340;border-color:var(--purple);color:#e6ccf5}
+  .b-p{background:#14281a;border-color:#4fa15a;color:#dff5e2}
+  .b-now{background:#3a2f14;border-color:var(--gold);color:var(--gold)}
+  .pos{color:var(--orange);font-weight:700}
+  .neg{color:var(--green);font-weight:700}
+  code{background:#000;border:1px solid var(--border);border-radius:5px;padding:1px 6px;font-size:.9em;color:var(--gold)}
+  .tip{background:#141d24;border-left:4px solid var(--blue);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:.93em}
+  .note{background:#1a1508;border-left:4px solid var(--gold-dim);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:.93em;color:var(--gold)}
+  footer{text-align:center;color:var(--muted);font-size:.82em;margin-top:34px;border-top:1px solid var(--border);padding-top:14px}
+  @media(max-width:640px){.biling{grid-template-columns:1fr}.biling .tr{border-right:none;border-bottom:1px solid var(--border)}}
+</style>
+
+<div class="wrap">
+<header>
+  <h1>⚔ PoE Leveling — Kullanım Kılavuzu</h1>
+  <div class="sub">Türkçe &amp; English · User Guide</div>
+  <div style="margin-top:10px"><a href="index.html" style="color:var(--gold);font-weight:600">← Uygulamaya dön / Back to app</a></div>
+</header>
+
+<!-- NE İŞE YARAR -->
+<h2>1. Bu uygulama nedir? <span class="en">/ What is this?</span></h2>
+<div class="card biling" style="padding:0">
+  <div class="tr">
+    <div class="lang">Türkçe</div>
+    Path of Exile'ın <b>1–10. Act</b> kampanyasını adım adım takip etmeni sağlayan bir rehberdir. İkinci ekranında açık dururken, <b>o an ne yapman gerektiğini</b> tek bakışta gösterir; istersen bir <b>otomatik sayaç</b> seni görevden göreve geçirir. Hangi <b>gem</b>'i ne zaman alacağını ve <b>pasif ağaç</b> planını da hatırlatır.
+  </div>
+  <div class="en">
+    <div class="lang">English</div>
+    <span class="en-txt">A step-by-step guide for the Path of Exile <b>Acts 1–10</b> campaign. Keep it on your second monitor and it shows <b>what to do right now</b> at a glance; an optional <b>auto timer</b> moves you from task to task. It also reminds you which <b>gems</b> to buy when, and your <b>passive tree</b> plan.</span>
+  </div>
+</div>
+
+<!-- HIZLI BAŞLANGIÇ -->
+<h2>2. Hızlı başlangıç <span class="en">/ Quick start</span></h2>
+<div class="card biling" style="padding:0">
+  <div class="tr">
+    <div class="lang">Türkçe</div>
+    <ol>
+      <li>Dosyayı <b>çift tıkla</b> aç (kurulum yok, internet gerekmez).</li>
+      <li>İlk açılışta <b>hedef süreyi seç</b> (3–7 saat). Tüm görev süreleri buna göre ayarlanır.</li>
+      <li>Pencereyi <b>2. monitöre</b> koy, oyunu 1. ekranda oyna.</li>
+      <li><b>▶ Otomatik başlat</b>'a bas — parlak olan "şu anki" görevi yap; süre dolunca sıradakine kendi geçer.</li>
+      <li>Bir görevi bitirince istersen <b>üstüne tıkla</b> (elle işaretle).</li>
+    </ol>
+  </div>
+  <div class="en">
+    <div class="lang">English</div>
+    <span class="en-txt"><ol>
+      <li><b>Double-click</b> the file (no install, no internet needed).</li>
+      <li>On first launch, <b>choose a target time</b> (3–7 h). All task durations scale to it.</li>
+      <li>Put the window on your <b>2nd monitor</b>, play the game on the 1st.</li>
+      <li>Press <b>▶ Auto start</b> — do the bright "current" task; it advances automatically when time runs out.</li>
+      <li>You can also <b>click a task</b> to tick it off manually.</li>
+    </ol></span>
+  </div>
+</div>
+
+<!-- ROZETLER -->
+<h2>3. Görev türleri &amp; rozetler <span class="en">/ Task types &amp; badges</span></h2>
+<div class="tblwrap"><table>
+  <tr><th>Rozet / Badge</th><th>Türkçe</th><th>English</th></tr>
+  <tr>
+    <td><span class="badge b-now">◀ ŞU AN</span></td>
+    <td>Şu an yapman gereken görev. Tek parlak satır budur; diğerleri soluktur.</td>
+    <td class="en-txt">The task to do right now. It's the only bright row; the rest are dimmed.</td>
+  </tr>
+  <tr>
+    <td><span class="badge b-v">🛒 SATICI</span></td>
+    <td>Satıcıyı kontrol et (item sat, gem'lere bak).</td>
+    <td class="en-txt">Check the vendor (sell items, look at gems).</td>
+  </tr>
+  <tr>
+    <td><span class="badge b-g">💎 GEM AL</span></td>
+    <td>Bu noktada yeni gem'ler açıldı; alınacak gem'leri buraya yazabilirsin.</td>
+    <td class="en-txt">New gems unlocked here; you can list the gems to buy.</td>
+  </tr>
+  <tr>
+    <td><span class="badge b-p">🌳 PASİF</span></td>
+    <td>5 sn'lik bilgilendirme: önündeki ~5 levelde gideceğin pasif düğümler.</td>
+    <td class="en-txt">A 5-second note: the passive nodes to take over the next ~5 levels.</td>
+  </tr>
+</table></div>
+<div class="tip">💡 Soluk bir görevi okumak için <b>fareyle üzerine gel</b> — anlık olarak netleşir. / Hover a dimmed task to read it clearly.</div>
+
+<!-- GEM & PASİF LİSTELERİ -->
+<h2>4. Gem &amp; pasif listeleri <span class="en">/ Gem &amp; passive lists</span></h2>
+<div class="card biling" style="padding:0">
+  <div class="tr">
+    <div class="lang">Türkçe</div>
+    <b>💎 Gem adımlarında</b> ve <b>🌳 pasif adımlarında</b> bir kutu vardır:
+    <ul>
+      <li>Kutuya yaz, <b>＋ Ekle</b>'ye (veya Enter) bas → eklediğin öğe etiket olur.</li>
+      <li>Gem'lerde dropdown ~200 gem önerir; <b>listede olmayan bir şeyi de yazabilirsin</b>.</li>
+      <li>Silmek için etiketteki <b>✕</b>'e bas.</li>
+      <li>Seçimlerin <b>kaydedilir</b>. O adım "şu an" olunca, alacakların tam karşına gelir.</li>
+    </ul>
+  </div>
+  <div class="en">
+    <div class="lang">English</div>
+    <span class="en-txt"><b>💎 Gem steps</b> and <b>🌳 passive steps</b> have a box:
+    <ul>
+      <li>Type in it, press <b>＋ Add</b> (or Enter) → your entry becomes a chip.</li>
+      <li>Gems offer a dropdown of ~200; you can also <b>type anything not in the list</b>.</li>
+      <li>Press <b>✕</b> on a chip to remove it.</li>
+      <li>Your picks are <b>saved</b>. When that step is "current", your list is right there.</li>
+    </ul></span>
+  </div>
+</div>
+<div class="note">🔑 <b>Act 3 – Siosa</b> ve <b>Act 6 – Lilly Roth</b> en önemli gem duraklarıdır (tüm gem'ler). / Act 3 Siosa &amp; Act 6 Lilly Roth are the key gem stops (all gems).</div>
+
+<!-- SAYAÇ -->
+<h2>5. Sayaç (timer) kontrolleri <span class="en">/ Timer controls</span></h2>
+<div class="tblwrap"><table>
+  <tr><th>Düğme / Button</th><th>Türkçe</th><th>English</th></tr>
+  <tr><td>▶ / ⏸</td><td>Otomatik başlat / Duraklat. Süre dolunca sıradaki göreve geçer.</td><td class="en-txt">Auto start / Pause. Advances to the next task when time is up.</td></tr>
+  <tr><td>⏭ Atla</td><td>Görevi hemen bitirip sonrakine geç (erken bitirdiysen).</td><td class="en-txt">Finish the task now and move on (if you're done early).</td></tr>
+  <tr><td>+30sn</td><td>Şu anki göreve 30 sn ekle.</td><td class="en-txt">Add 30 s to the current task.</td></tr>
+  <tr><td>🎯 Hedef</td><td>Toplam kampanya süresini değiştir (seçim ekranını açar).</td><td class="en-txt">Change the total campaign time (opens the picker).</td></tr>
+  <tr><td>🔔 / 🔕</td><td>Bildirim seslerini aç/kapat.</td><td class="en-txt">Toggle notification sounds.</td></tr>
+  <tr><td>▶ Şu ana git</td><td>Ekranı mevcut göreve kaydırır.</td><td class="en-txt">Scrolls the view to the current task.</td></tr>
+  <tr><td>Kalan tahmini / Est. remaining</td><td>Kampanyanın geri kalanı için tahmini süre.</td><td class="en-txt">Estimated time left for the rest of the campaign.</td></tr>
+</table></div>
+
+<!-- SESLER -->
+<h2>6. Bildirim sesleri <span class="en">/ Notification sounds</span></h2>
+<div class="tblwrap"><table>
+  <tr><th>Geçiş / Transition</th><th>Ses / Sound</th></tr>
+  <tr><td>Normal göreve / To a normal task</td><td>Kısa iki notalı "ding" · short two-note ding</td></tr>
+  <tr><td>💎 Skill/gem adımına / To a gem step</td><td>Yükselen üç notalı çınlama · rising three-note chime</td></tr>
+  <tr><td>🌳 Pasif adıma / To a passive step</td><td>Alçalan yumuşak çift nota · gentle descending pair</td></tr>
+</table></div>
+<div class="tip">🔊 Sesler <b>▶ başlat</b>'a bastıktan sonra çalışır (tarayıcı kuralı). Pencere küçültülse de sayaç çalışmaya devam eder; sayfa kapanınca durur. / Sounds work after you press <b>▶ start</b>. The timer keeps running while minimized; it stops when the page is closed.</div>
+
+<!-- SAPMA -->
+<h2>7. Uzama &amp; toplam sapma <span class="en">/ Overrun &amp; total drift</span></h2>
+<div class="card biling" style="padding:0">
+  <div class="tr">
+    <div class="lang">Türkçe</div>
+    Hedefinden ne kadar ileride/geride olduğunu gösterir.
+    <ul>
+      <li><b>⏱ Uzama</b>: duraklattığın an başlayan canlı sayaç (bu görev ne kadar uzadı).</li>
+      <li><b>Σ Toplam sapma</b>: net durumun. Şunlarla değişir:
+        <ul>
+          <li>Duraklama süresi → <span class="pos">+ artar</span></li>
+          <li><b>+30sn</b> butonu → <span class="pos">+30 sn</span></li>
+          <li><b>⏭ Atla</b> (erken) → kalan süre <span class="neg">− düşülür</span></li>
+        </ul>
+      </li>
+      <li><span class="pos">+ turuncu</span> = geride; <span class="neg">− yeşil</span> = önde.</li>
+    </ul>
+  </div>
+  <div class="en">
+    <div class="lang">English</div>
+    <span class="en-txt">Shows how far ahead/behind your target you are.
+    <ul>
+      <li><b>⏱ Overrun</b>: a live counter that starts when you pause (how long this task ran over).</li>
+      <li><b>Σ Total drift</b>: your net status. It changes with:
+        <ul>
+          <li>Pause time → <span class="pos">+ increases</span></li>
+          <li><b>+30s</b> button → <span class="pos">+30 s</span></li>
+          <li><b>⏭ Skip</b> (early) → leftover time is <span class="neg">− subtracted</span></li>
+        </ul>
+      </li>
+      <li><span class="pos">+ orange</span> = behind; <span class="neg">− green</span> = ahead.</li>
+    </ul></span>
+  </div>
+</div>
+
+<!-- DİĞER -->
+<h2>8. Diğer kontroller <span class="en">/ Other controls</span></h2>
+<div class="tblwrap"><table>
+  <tr><th>Öğe / Item</th><th>Türkçe</th><th>English</th></tr>
+  <tr><td>🌐 English / Türkçe</td><td>Tüm uygulamayı Türkçe ↔ İngilizce çevirir (kaydedilir).</td><td class="en-txt">Switches the whole app TR ↔ EN (saved).</td></tr>
+  <tr><td>🔎 Ara / Search</td><td>Boss, item veya alan adına göre görev bul.</td><td class="en-txt">Find tasks by boss, item, or area name.</td></tr>
+  <tr><td>A− / A+</td><td>Yazı boyutunu küçült/büyüt.</td><td class="en-txt">Decrease/increase text size.</td></tr>
+  <tr><td>Hepsini aç/kapat / Expand·Collapse</td><td>Act'leri açar veya katlar.</td><td class="en-txt">Expands or collapses the acts.</td></tr>
+  <tr><td>✏️ Düzenle / Edit</td><td>Bir görevin üstüne gelince çıkan ✏️ ile <b>metni yerinde düzenle</b>. <b>Enter</b> kaydet · <b>Esc</b> iptal. Değişiklik tarayıcıda saklanır ve TR/EN için ayrıdır.</td><td class="en-txt">Hover a task and use ✏️ to <b>edit its text in place</b>. <b>Enter</b> to save · <b>Esc</b> to cancel. Saved in the browser, separately for TR/EN.</td></tr>
+  <tr><td>⬇ Yedekle · ⬆ Geri yükle<br>Backup · Restore</td><td>Tüm verini (işaretler, gem/pasif listeleri, metin düzenlemeleri, hedef süre, dil, sayaç) bir <b>.json dosyasına</b> indir; sonra geri yükle.</td><td class="en-txt">Download all your data (ticks, gem/passive lists, text edits, target, language, timer) to a <b>.json file</b>; restore it later.</td></tr>
+  <tr><td>↺ Sıfırla / Reset</td><td>Tüm ilerlemeyi ve sapmayı siler (yeni karakter). Eklediğin gem/pasif listeleri ve metin düzenlemeleri kalır.</td><td class="en-txt">Clears all progress and drift (new character). Your gem/passive lists and text edits remain.</td></tr>
+</table></div>
+<div class="note">✏️ Metin düzenlemeleri <b>o tarayıcıda</b> saklanır; <b>.html dosyasının kendisini değiştirmez</b> (tarayıcı güvenliği). Aynı bilgisayar/tarayıcıda kalıcıdır. / Text edits are saved <b>in that browser</b>; they do <b>not</b> modify the .html file itself. They persist on the same computer/browser.</div>
+
+<!-- KAYIT -->
+<h2>9. Kayıt &amp; kalıcılık <span class="en">/ Saving &amp; persistence</span></h2>
+<div class="card biling" style="padding:0">
+  <div class="tr">
+    <div class="lang">Türkçe</div>
+    Her şey <b>otomatik ve tarayıcıda</b> kaydedilir: görev işaretleri, gem/pasif listeleri, hedef süre, dil, sayaç durumu ve sapma. <b>Sayfayı yenilesen bile sayaç kaldığı yerden devam eder.</b> Not: veri o tarayıcıda saklanır — başka cihazda/tarayıcıda görünmez.
+  </div>
+  <div class="en">
+    <div class="lang">English</div>
+    <span class="en-txt">Everything is saved <b>automatically, in the browser</b>: task ticks, gem/passive lists, target time, language, timer state and drift. <b>The timer resumes where it left off even after a refresh.</b> Note: data lives in that browser — it won't appear on another device/browser.</span>
+  </div>
+</div>
+
+<!-- İPUÇLARI -->
+<div class="note">💾 Tarayıcının <b>"çerezler / site verileri"</b>ni silersen (ya da gizli pencere kapanınca) <b>tüm veri gider</b>. Buna karşı ara sıra <b>⬇ Yedekle</b> ile bir yedek al; yeni cihazda/tarayıcıda <b>⬆ Geri yükle</b> ile geri getir.<br>
+If you clear the browser's <b>"cookies / site data"</b> (or close a private window), <b>all data is lost</b>. Take a <b>⬇ Backup</b> now and then; use <b>⬆ Restore</b> on a new device/browser.</div>
+
+<h2>10. İpuçları <span class="en">/ Tips</span></h2>
+<div class="tip">🖥️ En iyi kullanım: uygulamayı 2. monitöre koy, gözünü <b>parlak olan tek satıra</b> (şu anki görev) ver.<br>🖥️ Best use: put it on a 2nd monitor and just watch the <b>single bright row</b> (the current task).</div>
+<div class="tip">🐢🐇 Kendine göre yavaş/hızlıysan <b>🎯 Hedef</b>'ten süreyi değiştir — her şey yeniden ölçeklenir.<br>Adjust the <b>🎯 Target</b> time to your pace — everything rescales.</div>
+<div class="note">⚠️ Labirentler (Act 3/7/10) ve süreler <b>tahminidir</b>; oyun sürümüne göre küçük farklar olabilir. Labirent düzenleri: <b>poelab.com</b>. / Labyrinths and times are <b>estimates</b>; small differences per game version are possible.</div>
+
+<footer>
+  PoE Leveling · <b>gayri resmî</b>, ücretsiz bir topluluk yardımcı aracıdır.<br>
+  An <b>unofficial</b>, free community helper tool.<br>
+  <span style="opacity:.8">Path of Exile, Grinding Gear Games'in ticari markasıdır. Bu araç GGG ile bağlantılı veya onaylı değildir.<br>
+  Path of Exile is a trademark of Grinding Gear Games. Not affiliated with or endorsed by GGG.</span>
+</footer>
+</div>

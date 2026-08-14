@@ -1,0 +1,1399 @@
+<meta charset="utf-8">
+<title>PoE Başlangıç: ACT'ler</title>
+<style>
+  :root{
+    --bg:#0d0d10;
+    --panel:#16161c;
+    --panel2:#1d1d25;
+    --border:#2a2a35;
+    --text:#e7e3d6;
+    --muted:#8b8778;
+    --gold:#c8aa6e;
+    --gold-dim:#7a6a45;
+    --done:#3a4a34;
+    --done-text:#7fae6a;
+    --now:#3a2f14;
+    --now-border:#c8aa6e;
+    --accent:#4a9fd4;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Segoe UI",Roboto,system-ui,sans-serif;
+    font-size:var(--fs,15px);
+    line-height:1.4;
+    -webkit-user-select:none;
+    user-select:none;
+  }
+  /* ---------- Header ---------- */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:linear-gradient(180deg,#15151b 0%,#111116 100%);
+    border-bottom:1px solid var(--border);
+    padding:10px 14px;
+    box-shadow:0 4px 12px rgba(0,0,0,.5);
+  }
+  .htop{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  h1{
+    margin:0;font-size:1.15em;font-weight:700;letter-spacing:.5px;
+    color:var(--gold);white-space:nowrap;
+  }
+  h1 span{color:var(--muted);font-weight:400;font-size:.75em}
+  .bar-wrap{flex:1;min-width:140px}
+  .bar{
+    height:14px;background:#000;border:1px solid var(--border);
+    border-radius:8px;overflow:hidden;position:relative;
+  }
+  .bar>i{
+    display:block;height:100%;width:0;
+    background:linear-gradient(90deg,var(--gold-dim),var(--gold));
+    transition:width .25s ease;
+  }
+  .bar-lbl{font-size:.75em;color:var(--muted);text-align:right;margin-top:2px}
+  .controls{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  button{
+    background:var(--panel2);color:var(--text);border:1px solid var(--border);
+    border-radius:6px;padding:5px 10px;font-size:.82em;cursor:pointer;
+    font-family:inherit;transition:.15s;white-space:nowrap;
+  }
+  button:hover{border-color:var(--gold-dim);background:#26262f}
+  button.primary{background:var(--gold);color:#1a1408;border-color:var(--gold);font-weight:600}
+  button.primary:hover{background:#d8ba7e}
+  button.danger:hover{border-color:#a44;color:#f0a0a0}
+  #search{
+    background:#000;border:1px solid var(--border);color:var(--text);
+    border-radius:6px;padding:5px 10px;font-size:.85em;font-family:inherit;
+    flex:1;min-width:120px;
+  }
+  #search:focus{outline:none;border-color:var(--gold-dim)}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:7px;font-size:.72em;color:var(--muted)}
+  .legend span{display:flex;align-items:center;gap:5px}
+  .legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+  .legend .lg-v{background:#14231f;border-left:3px solid #4fb87a}
+  .legend .lg-g{background:#1f1630;border-left:3px solid #a06cd4}
+  .legend .lg-n{background:var(--now);border:1px solid var(--now-border)}
+  /* ---------- Timer çubuğu ---------- */
+  #timerbar{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    margin-top:9px;padding:9px 11px;border-radius:9px;
+    background:linear-gradient(180deg,#1c1a10,#141208);
+    border:1px solid var(--gold-dim);
+  }
+  #tbtn{min-width:120px}
+  #tbtn.running{background:#c0533a;border-color:#c0533a;color:#fff}
+  .tinfo{flex:1;min-width:150px}
+  .tnow{font-size:.82em;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tprog{height:8px;background:#000;border:1px solid var(--border);border-radius:5px;overflow:hidden;margin-top:4px}
+  .tprog>i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#e0a94a,#f0d080);transition:width 1s linear}
+  .tprog.low>i{background:linear-gradient(90deg,#c0533a,#e08050)}
+  .tcount{font-size:1.5em;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text);min-width:74px;text-align:center}
+  .tcount.low{color:#f0876a;animation:pulse 1s infinite}
+  .tempo{display:flex;align-items:center;gap:3px;font-size:.75em;color:var(--muted)}
+  .tempo button{padding:4px 8px}
+  .tempo button.on{background:var(--gold);color:#1a1408;border-color:var(--gold);font-weight:700}
+  #tgt{width:70px;background:#000;border:1px solid var(--border);color:var(--text);
+    border-radius:6px;padding:8px 6px;font-size:1em;font-family:inherit;text-align:center}
+  #tgt:focus{outline:none;border-color:var(--gold-dim)}
+  #tgtbtn{background:#241d0f;border-color:var(--gold-dim);color:var(--gold);font-weight:600}
+  #tgtbtn:hover{background:#2e2612}
+  #langbtn{background:#12212b;border-color:#33546b;color:#8fc4e6;font-weight:600;white-space:nowrap}
+  #langbtn:hover{background:#17303e;border-color:#4a9fd4}
+  /* ---------- Hedef seçim ekranı ---------- */
+  .overlay{
+    position:fixed;inset:0;z-index:200;
+    background:rgba(6,6,9,.86);backdrop-filter:blur(3px);
+    display:flex;align-items:center;justify-content:center;padding:18px;
+  }
+  .overlay.hidden{display:none}
+  .picker{
+    background:linear-gradient(180deg,#17171d,#101015);
+    border:1px solid var(--gold-dim);border-radius:14px;
+    max-width:560px;width:100%;max-height:90vh;overflow:auto;
+    padding:22px 20px;box-shadow:0 20px 60px rgba(0,0,0,.7);
+  }
+  .picker h2{margin:0 0 4px;color:var(--gold);font-size:1.3em;text-align:center}
+  .picker .sub{margin:0 0 16px;color:var(--muted);font-size:.85em;text-align:center}
+  .pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+  .pcard{
+    background:var(--panel2);border:1px solid var(--border);border-radius:10px;
+    padding:12px 10px;cursor:pointer;text-align:center;transition:.15s;
+  }
+  .pcard:hover{border-color:var(--gold);background:#26262f;transform:translateY(-2px)}
+  .pcard.on{border-color:var(--gold);background:#241d0f;box-shadow:0 0 0 1px var(--gold)}
+  .pcard .ph{font-size:1.5em;font-weight:700;color:var(--text)}
+  .pcard .pd{font-size:.78em;color:var(--muted);margin-top:3px}
+  .pcard.rec{border-color:var(--gold-dim)}
+  .pcard.rec .ph{color:var(--gold)}
+  .prec{display:inline-block;font-size:.62em;background:var(--gold);color:#1a1408;
+    font-weight:700;padding:1px 6px;border-radius:10px;margin-top:5px;letter-spacing:.5px}
+  .pcustom{display:flex;align-items:center;justify-content:center;gap:8px;
+    margin-top:16px;flex-wrap:wrap;color:var(--muted);font-size:.85em}
+  .pclose{display:block;margin:16px auto 0}
+  .teta{font-size:.75em;color:var(--muted);white-space:nowrap}
+  .teta b{color:var(--gold)}
+  .tover{font-size:.82em;color:#f0a85a;white-space:nowrap;font-weight:600}
+  .tover b{color:#ffb347;font-variant-numeric:tabular-nums}
+  .tovertot{font-size:.75em;color:#c98a4a;white-space:nowrap}
+  .tovertot b{color:#ff9a3c;font-variant-numeric:tabular-nums}
+  .tovertot.ahead{color:#6bbf80}
+  .tovertot.ahead b{color:#5fd08a}
+  .tovertot:empty{display:none}
+  /* süre etiketi (her adımda) */
+  .est{
+    align-self:center;flex:none;font-size:.7em;color:var(--muted);
+    font-variant-numeric:tabular-nums;background:#000;border:1px solid var(--border);
+    border-radius:20px;padding:1px 7px;white-space:nowrap;
+  }
+  .step.now .est{color:var(--gold);border-color:var(--gold-dim)}
+  .editbtn{align-self:center;flex:none;background:transparent;border:none;cursor:pointer;font-size:.9em;opacity:0;padding:2px 4px;transition:.15s;line-height:1}
+  .step:hover .editbtn{opacity:.5}
+  .editbtn:hover{opacity:1;background:transparent}
+  .txt.editing{outline:1px solid var(--gold);background:#000;border-radius:4px;padding:2px 6px;cursor:text;white-space:normal}
+  /* ---------- Acts ---------- */
+  main{padding:8px 12px 60px}
+  .act{
+    background:var(--panel);border:1px solid var(--border);
+    border-radius:10px;margin:10px 0;overflow:hidden;
+  }
+  .act-head{
+    display:flex;align-items:center;gap:10px;
+    padding:10px 12px;cursor:pointer;background:var(--panel2);
+    position:sticky;top:0;
+  }
+  .act-head:hover{background:#24242e}
+  .caret{color:var(--gold);transition:transform .2s;font-size:.8em;width:12px}
+  .act.collapsed .caret{transform:rotate(-90deg)}
+  .act-title{font-weight:700;color:var(--gold);flex:1;font-size:1.02em}
+  .act-prog{font-size:.78em;color:var(--muted);white-space:nowrap}
+  .act-minibar{width:70px;height:6px;background:#000;border-radius:4px;overflow:hidden}
+  .act-minibar>i{display:block;height:100%;width:0;background:var(--gold);transition:width .25s}
+  .act.collapsed .steps{display:none}
+  .steps{padding:4px 6px 8px}
+  /* ---------- Steps ---------- */
+  .step{
+    display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;
+    padding:8px 10px;border-radius:7px;margin:2px 0;
+    cursor:pointer;transition:.12s;border:1px solid transparent;
+  }
+  .step:hover{background:var(--panel2)}
+  .step .box{
+    flex:none;width:20px;height:20px;border:2px solid var(--gold-dim);
+    border-radius:5px;margin-top:1px;display:flex;align-items:center;
+    justify-content:center;font-size:14px;color:transparent;transition:.12s;
+  }
+  .step .num{color:var(--muted);font-variant-numeric:tabular-nums;min-width:1.4em;text-align:right}
+  .step .txt{flex:1}
+  /* Sadece MEVCUT görev parlak; diğer TÜM görevler (yapılmış + yapılmamış) soluk */
+  .step:not(.now){opacity:.38}
+  .step:not(.now):hover{opacity:1}     /* üstüne gelince okunur olsun */
+  .step:focus-within{opacity:1}        /* gem eklerken (input odakta) parlak kalsın */
+  .step.done .box{background:var(--done);border-color:var(--done);color:var(--done-text)}
+  .step.now{
+    opacity:1;
+    background:var(--now);border-color:var(--now-border);
+    box-shadow:0 0 0 1px var(--now-border),0 0 16px rgba(200,170,110,.22);
+  }
+  .step.now .txt{font-weight:600;color:#fff}
+  .step.now .num{color:var(--gold)}
+  .step.now::after{
+    content:"◀ ŞU AN";color:var(--gold);font-size:.72em;font-weight:700;
+    align-self:center;letter-spacing:.5px;animation:pulse 1.6s infinite;
+  }
+  :root[lang="en"] .step.now::after{content:"◀ NOW"}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+  .step.hidden{display:none}
+  /* ---------- Satıcı adımları ---------- */
+  .step.vendor{
+    background:#14231f;
+    border-left:4px solid #4fb87a;
+    padding-left:8px;
+  }
+  .step.vendor:hover{background:#193026}
+  .step.vendor .box{border-color:#4fb87a}
+  .step.vendor.done{background:transparent;border-left-color:#2e5c44}
+  .vbadge{
+    align-self:center;flex:none;
+    background:#1d5c3a;color:#a9f0c6;
+    font-size:.68em;font-weight:700;letter-spacing:.5px;
+    padding:2px 7px;border-radius:20px;border:1px solid #4fb87a;
+    white-space:nowrap;
+  }
+  .step.done .vbadge{opacity:.5}
+  /* ---------- Gem alışveriş adımları ---------- */
+  .step.gem{
+    background:#1f1630;
+    border-left:4px solid #a06cd4;
+    padding-left:8px;
+    align-items:center;
+  }
+  .step.gem:hover{background:#281d3d}
+  .step.gem .box{border-color:#a06cd4}
+  .step.gem.done{background:transparent;border-left-color:#5a3f7a}
+  .step.gem .txt{font-size:.92em}
+  .step.gem .txt b{color:#e0c6f0}
+  .step.gem.done .box{background:#4a2f6e;border-color:#4a2f6e;color:#d9b8f0}
+  .gbadge{
+    align-self:flex-start;flex:none;margin-top:2px;
+    background:#3a2359;color:#e6ccf5;
+    font-size:.66em;font-weight:700;letter-spacing:.5px;
+    padding:3px 8px;border-radius:20px;border:1px solid #a06cd4;
+    white-space:nowrap;
+  }
+  .step.gem .num{color:#a06cd4}
+  .step.done .gbadge{opacity:.5}
+  /* ---------- Kullanıcının gem alışveriş listesi ---------- */
+  .gembox{flex-basis:100%;margin-top:8px;padding-top:8px;border-top:1px dashed #4a3a63}
+  .usergems-lbl{font-size:.72em;color:#c89be0;margin-bottom:5px;font-weight:600}
+  .usergems{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:7px}
+  .usergems:empty{display:none}
+  .gemchip{background:#2a2340;border:1px solid #a06cd4;color:#efe0f8;border-radius:20px;
+    padding:3px 5px 3px 10px;font-size:.84em;display:inline-flex;align-items:center;gap:7px;font-weight:600}
+  .gemchip b{cursor:pointer;color:#c89be0;font-weight:700;padding:0 3px;border-radius:10px}
+  .gemchip b:hover{color:#fff;background:#5a3f7a}
+  .gemadd{display:flex;gap:6px;flex-wrap:wrap}
+  .geminput{background:#000;border:1px solid var(--border);color:var(--text);border-radius:6px;
+    padding:5px 9px;font-size:.85em;font-family:inherit;min-width:150px;flex:1}
+  .geminput:focus{outline:none;border-color:#a06cd4}
+  .gemadd button{background:#3a2359;border-color:#a06cd4;color:#efe0f8;font-weight:600}
+  .gemadd button:hover{background:#4a2f6e}
+  /* ---------- Pasif adımı (görev listesi içinde) ---------- */
+  .step.passive{background:#122016;border-left:4px solid #4fa15a;padding-left:8px;align-items:center}
+  .step.passive:hover{background:#17301f}
+  .step.passive .box{border-color:#4fa15a}
+  .step.passive.done .box{background:#2f5c37;border-color:#2f5c37;color:#9fe0a8}
+  .step.passive .num{color:#8fd48f}
+  .passbadge{align-self:center;flex:none;background:#1d4a28;color:#bfe8c6;font-size:.66em;font-weight:700;letter-spacing:.5px;padding:3px 8px;border-radius:20px;border:1px solid #4fa15a;white-space:nowrap}
+  .step.done .passbadge{opacity:.5}
+  .gembox.pass{border-top-color:#2f5c37}
+  .gembox.pass .usergems-lbl{color:#8fd48f}
+  .gembox.pass .gemchip{background:#14281a;border-color:#4fa15a;color:#dff5e2}
+  .gembox.pass .gemchip b{color:#8fd48f}
+  .gembox.pass .gemchip b:hover{background:#2f5c37}
+  .gembox.pass .geminput:focus{border-color:#4fa15a}
+  .gembox.pass .gemadd button{background:#1d4a28;border-color:#4fa15a}
+  .gembox.pass .gemadd button:hover{background:#26602f}
+  /* Pasif bilgilendirme bloğu (görev değil, görevler arası) */
+  .passinfo{background:linear-gradient(180deg,#12241a,#0f1d15);border:1px solid #2f5c37;border-left:4px solid #4fa15a;border-radius:9px;margin:8px 4px;padding:10px 12px;box-shadow:0 0 12px rgba(79,161,90,.10)}
+  .passinfo-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .passinfo-txt{color:#cdeecf;font-weight:600;font-size:.9em}
+  /* ---------- (eski) Pasif Ağaç Planı paneli — artık kullanılmıyor ---------- */
+  #passive{margin:12px 12px 70px;background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+  .pass-head{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;background:var(--panel2)}
+  .pass-head:hover{background:#24242e}
+  .pass-head .caret{color:#6fbf73;transition:transform .2s;font-size:.8em;width:12px}
+  #passive.collapsed .pass-body{display:none}
+  #passive.collapsed .caret{transform:rotate(-90deg)}
+  .pass-title{font-weight:700;color:#8fd48f;flex:1}
+  .pass-prog{font-size:.78em;color:var(--muted)}
+  .pass-sub{font-size:.76em;color:var(--muted);padding:9px 14px 4px;line-height:1.5}
+  .pass-body{padding:2px 8px 10px}
+  .passrow{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:9px 10px;border-radius:7px;margin:3px 0;border:1px solid transparent}
+  .passrow:hover{background:var(--panel2)}
+  .passrow.done{opacity:.5}
+  .passrow .box{flex:none;width:20px;height:20px;border:2px solid #4fa15a;border-radius:5px;display:flex;align-items:center;justify-content:center;color:transparent;cursor:pointer;font-size:14px}
+  .passrow.done .box{background:#2f5c37;border-color:#2f5c37;color:#9fe0a8}
+  .passlvl{flex:none;min-width:64px;font-weight:700;color:#8fd48f;background:#132218;border:1px solid #2f5c37;border-radius:20px;padding:3px 10px;text-align:center;font-size:.84em;cursor:pointer}
+  .passgems{display:flex;flex-wrap:wrap;gap:6px;flex:1;min-width:100%}
+  .passgems:empty{display:none}
+  .passchip{background:#14281a;border:1px solid #4fa15a;color:#dff5e2;border-radius:20px;padding:3px 5px 3px 10px;font-size:.84em;display:inline-flex;align-items:center;gap:7px;font-weight:600}
+  .passchip b{cursor:pointer;color:#8fd48f;font-weight:700;padding:0 3px;border-radius:10px}
+  .passchip b:hover{color:#fff;background:#2f5c37}
+  .passadd{display:flex;gap:6px;flex:1;min-width:100%}
+  .passinput{background:#000;border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 9px;font-size:.85em;font-family:inherit;flex:1;min-width:150px}
+  .passinput:focus{outline:none;border-color:#4fa15a}
+  .passadd button{background:#1d4a28;border-color:#4fa15a;color:#dff5e2;font-weight:600}
+  .passadd button:hover{background:#26602f}
+  /* ---------- Notes ---------- */
+  .note{
+    margin:6px 8px;padding:9px 12px;border-radius:7px;
+    background:#1a1508;border:1px solid var(--gold-dim);
+    color:var(--gold);font-size:.88em;display:flex;gap:8px;align-items:flex-start;
+  }
+  .note .ic{flex:none}
+  .note a{color:var(--accent)}
+  b.hl{color:#f0d9a0}
+  .empty{color:var(--muted);text-align:center;padding:30px;font-style:italic}
+  footer{
+    position:fixed;bottom:0;left:0;right:0;
+    background:#0a0a0d;border-top:1px solid var(--border);
+    padding:6px 12px;font-size:.75em;color:var(--muted);text-align:center;
+  }
+  /* scrollbar */
+  ::-webkit-scrollbar{width:11px}
+  ::-webkit-scrollbar-track{background:#0a0a0d}
+  ::-webkit-scrollbar-thumb{background:#2e2e38;border-radius:6px}
+  ::-webkit-scrollbar-thumb:hover{background:var(--gold-dim)}
+</style>
+
+<header>
+  <div class="htop">
+    <h1><span id="ttl"></span> <span id="ov-count"></span></h1>
+    <div class="bar-wrap">
+      <div class="bar"><i id="ov-bar"></i></div>
+      <div class="bar-lbl" id="ov-lbl">0%</div>
+    </div>
+    <button id="langbtn" onclick="toggleLang()" title="Language / Dil"></button>
+  </div>
+  <div class="controls">
+    <button class="primary" id="btnGoNow" onclick="goNow()"></button>
+    <input id="search" oninput="doSearch(this.value)">
+    <button id="btnExpand" onclick="expandAll(true)"></button>
+    <button id="btnCollapse" onclick="expandAll(false)"></button>
+    <button onclick="fontSize(-1)">A−</button>
+    <button onclick="fontSize(1)">A+</button>
+    <button id="btnExport" onclick="exportBackup()"></button>
+    <button id="btnImport" onclick="document.getElementById('bkfile').click()"></button>
+    <input type="file" id="bkfile" accept=".json,application/json" style="display:none" onchange="importBackup(this)">
+    <button class="danger" id="btnReset" onclick="resetAll()"></button>
+  </div>
+  <div class="legend">
+    <span><i class="lg-v"></i> <span id="lgV"></span></span>
+    <span><i class="lg-g"></i> <span id="lgG"></span></span>
+    <span><i class="lg-n"></i> <span id="lgN"></span></span>
+  </div>
+  <div id="timerbar">
+    <button id="tbtn" class="primary" onclick="toggleTimer()"></button>
+    <div class="tinfo">
+      <div class="tnow" id="tnow">—</div>
+      <div class="tprog" id="tprog"><i id="tprogbar"></i></div>
+    </div>
+    <div class="tcount" id="tcount">--:--</div>
+    <button id="btnAdd" onclick="addTime(30)"></button>
+    <button id="btnSkip" onclick="skipCurrent()"></button>
+    <button id="sndbtn" onclick="toggleSound()" title="Bildirim sesi aç/kapa">🔔</button>
+    <button id="tgtbtn" onclick="openPicker()"></button>
+    <div class="tover" id="tover" style="display:none"></div>
+    <div class="tovertot" id="tovertot"></div>
+    <div class="teta" id="teta"></div>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<footer id="footer"></footer>
+
+<div id="picker" class="overlay hidden">
+  <div class="picker">
+    <h2 id="pkTitle"></h2>
+    <p class="sub" id="pkSub"></p>
+    <div class="pgrid" id="pgrid"></div>
+    <div class="pcustom">
+      <span id="pkCustom"></span>
+      <input id="tgt" type="number" min="90" max="1200" step="15">
+      <span id="pkUnit"></span>
+      <button id="pkApply" onclick="pickTarget(document.getElementById('tgt').value)"></button>
+    </div>
+    <button class="pclose" id="pkClose" onclick="closePicker()"></button>
+  </div>
+</div>
+
+<datalist id="gemdb"></datalist>
+
+<script>
+/* ============ VERİ ============ */
+const DATA = [
+{title:"ACT 1", steps:[
+ "Hillock kes, şehre gir",
+ {pass:true,lv:1,t:"Lvl 1 — sonraki ~5 levelde gideceğin pasif puanları"},
+ "Satıcılara bak ve Coast'a gir, waypoint bul ve Mud Flats'a gir",
+ "Mud Flats'ta 3 tane görev itemini bul ve Submerged Passage'a gir",
+ {gem:true, t:"<b>Bu görev (Breaking Some Eggs) Frostblink'i açar!</b> Şehre dönünce (veya bir sonraki satıcı ziyaretinde) Nessa'dan <b>Frostblink</b>'i (lvl 4) al ve <b>tüm Act 1 boyunca</b> kullan. <b>Dash</b> (lvl 4) da burada açılır. Hareket becerileri (Flame Dash/Leap Slam) daha lvl 10'da, Brutus'ta gelir."},
+ "Submerged Passage'da waypointten Coast'a ışınlan ve Tidal Island'a git",
+ "Tidal Island sonundaki Hailrake kes ve şehre dön",
+ "Satıcıları kontrol et ve Submerged Passage'a ışınlan",
+ "Submerged Passage'da köprü bul, Portal koy ve Ledge geç",
+ "Ledge'den Climb geç ve Lower Prison gir. Waypoint bul, şehre dön ve portala gir",
+ {pass:true,lv:5,t:"Lvl 5 — sonraki ~5 levelde gideceğin pasif puanları"},
+ "Submerged Passage'de Flooded Depths bul ve Dweller of the Deep kesip şehre dön",
+ "Satıcıları kontrol et ve Lower Prison'a ışınlan. Labirenti yap ve Upper Prison geç",
+ "Upper Prison'da flask yerini bul ve Brutus kes, şehre dön",
+ {pass:true,lv:10,t:"Lvl 10 — sonraki ~5 levelde gideceğin pasif puanları"},
+ {gem:true, t:"<b>Brutus (The Caged Brute) HAREKET becerisini açar (lvl 10).</b> Şehirde Nessa'dan build'ine uygun olanı AL: <b>Flame Dash</b> (caster), <b>Leap Slam</b> (melee), <b>Whirling Blades</b> (bıçak/pençe), <b>Blink Arrow</b> (yay). Ayrıca yeni support gem'lere bak."},
+ "Prisoner's Gate'e ışınlan ve Ship Graveyard'a gir",
+ "Ship Graveyard'da waypoint bul, Cave girişini bul ve portal koy, Cavern of Wrath girişini bul ve gir",
+ "Cavern of Wrath'dan şehre dön, portala gir ve Cave'e gir. Sonundaki itemi al, çık",
+ "Fairgraves kes, şehre dön ve satıcıları kontrol et",
+ "Cavern of Wrath ve Cavern of Anger geç, Merveil kes ve arkasındaki kapıya gir",
+]},
+{title:"ACT 2", steps:[
+ "Southern Forest'tan Forest Encampment'e giriyoruz",
+ "Old Fields'a gir. Yolda Den'e gir ve White Beast kes, sonra Old Fields'a geri gel",
+ "Crossroads gir. Waypoint bul ve Chamber of Sins 1 gir, waypoint bul ve Chamber of Sins 2 gir",
+ {pass:true,lv:15,t:"Lvl 15 — sonraki ~5 levelde gideceğin pasif puanları"},
+ "Chamber of Sins 2 labirenti yap ve Fidelitas öldür, şehre dön",
+ {gem:true, t:"<b>Fidelitas sonrası satıcıyı aç (lvl 16 gemler).</b> AL: build'ine uygun <b>Herald</b> — <b>Herald of Ice</b> (soğuk), <b>Herald of Thunder</b> (şimşek), <b>Herald of Ash</b> (ateş/melee), <b>Herald of Agony/Purity</b> (zehir/fiziksel). Ayrıca eksik support gem'lere bak."},
+ "Satıcılarla konuş, Crossroads'a ışınlan ve Broken Bridge gir. Kraityn öldür ve şehre dön",
+ "Crossroads git, Fellshrine Ruins gir ve Crypt Level 1 gir",
+ "Crypt Level 1 labirent yap ve Crypt Level 2 gir",
+ "Crypt Level 2 Golden Hand itemini al ve şehre dön",
+ "Riverways gir, waypoint bul ve Western Forest gir. Waypoint bul ve Weaver's Chamber'a gir",
+ "Weaver's Chamber'da Weaver bossunu öldür ve şehre dön",
+ {pass:true,lv:20,t:"Lvl 20 — sonraki ~5 levelde gideceğin pasif puanları"},
+ {gem:true, t:"<b>Weaver sonrası satıcıyı aç (lvl 18 gemler).</b> Build'ine göre kilit support'ları AL: <b>Controlled Destruction, Elemental Focus, Hypothermia, Combustion, Faster Attacks, Faster Projectiles, Elemental Damage with Attacks, Added Cold/Fire/Lightning Damage</b>. Ana skill'ini 4-link'e doğru güçlendir."},
+ "Western Forest'e geri gel. Alira öldür ve yolun sonundaki bossu kesip yolu aç",
+ "Riverways'e ışınlan ve Wetlands'a gir. Oak öldür ve waypoint bul, şehre dön",
+ "Wetlands'a geri gel ve Vaal Ruins gir, sırayla Northern Forest, Caverns ve Ancient Pyramid git",
+ "En sonda Vaal Oversoul öldür ve act'i bitir",
+]},
+{title:"ACT 3", steps:[
+ "City of Sarn'da Clarissa kurtarıp, konuşup şehre giriyoruz",
+ "Slums'a girip Crematorium'a geçiyoruz",
+ "Crematorium'da labirenti yapıp, Piety ile savaşıp Tolman itemini alıp şehre dönüyoruz",
+ {gem:true, t:"<b>Piety sonrası satıcıyı aç (lvl 24 gemler) → AURA zamanı!</b> Build'ine uygun aura AL: <b>Hatred</b> (fiziksel→soğuk), <b>Wrath</b> (şimşek), <b>Anger</b> (ateş), <b>Grace</b> (kaçınma), <b>Determination</b> (zırh), <b>Discipline</b> (enerji kalkanı), <b>Malevolence/Zealotry/Pride</b>. Ayrıca <b>Clarity/Vitality/Precision</b> (mana/can/isabet)."},
+ "Şehirde Clarissa'dan item alıp Slums'a gir, Sewers'a geç",
+ "Sewers'da 3 tane heykel bul ve Marketplace gir",
+ {pass:true,lv:25,t:"Lvl 25 — sonraki ~5 levelde gideceğin pasif puanları"},
+ "Marketplace'de waypoint bul, Catacombs'a gir. Labirenti yap, şehre dön",
+ "Marketplace'den Battlefront'a gir, waypoint bul, yanında görev itemini al",
+ "Battlefront'tan Docks'a gir ve Thaumetic Sulphite itemini bul",
+ "Battlefront'tan Solaris Temple 1 ve 2 git. En sonunda Dialla ile konuş",
+ "Sewers git ve Ebony Barracks'a gir",
+ "Ebony Barracks'tan Lunaris Temple 1 ve 2'ye git. Sonunda Piety öldür",
+ {pass:true,lv:30,t:"Lvl 30 — sonraki ~5 levelde gideceğin pasif puanları"},
+ "Ebony Barracks'tan Imperial Gardens'a gir, labirenti yap, Sceptre of God'a gir",
+ "🔑 Imperial Gardens yakınından The Library'ye gir. 'A Fixture of Fate' görevini al, Archives'te 4 Golden Page topla ve Siosa'ya ver",
+ {gem:true, t:"<b>🔑 SIOSA AÇILDI — EN ÖNEMLİ GEM DURAĞI!</b> Siosa artık <b>tüm gemleri (lvl 31'e kadar) HER renk ve HER class için</b> satar. Build'inde eksik olan <b>TÜM</b> skill + support gem'leri şimdi al (buraya kadar kaçırdığın ne varsa). Sonraki karakterlerin için de en verimli gem alışveriş noktası burası."},
+ "Sceptre of God sonunda Dominus öldür ve act'i bitir",
+ "Act 3 merkezdeki heykele tıkla, Aspirant's Plaza'ya ışınlan ve Normal Labirenti yap (Ascendancy puanını al). Eksik trial varsa önce tamamla",
+]},
+{title:"ACT 4", steps:[
+ "Aqueduct geç ve Highgate gir. Highgate'den Dried Lake'e geç",
+ "Mines Level 1 ve 2 geç, Mines Level 2'de Deshret's Spirit bul ve Crystal Veins geç",
+ "Crystal Veins waypoint bul",
+ {pass:true,lv:35,t:"Lvl 35 — sonraki ~5 levelde gideceğin pasif puanları"},
+ "Daresso's Dream'den Grand Arena'ya geç. Daresso öldür ve Eye of Desire al",
+ "Kaom's Dream'den Kaom's Stronghold'a geç. Kaom öldür ve The Eye of Fury al",
+ "Crystal Veins'e geri gel. Belly of the Beast 1 ve 2 gir",
+ "Belly of the Beast 2'de Piety öldür ve Harvest'a gir",
+ {gem:true, t:"<b>Dialla (Belly of the Beast) sonrası satıcıyı aç (lvl 38 gemler).</b> AL: <b>Cast when Damage Taken</b> (CwDT setup için), <b>Spell Echo</b> (caster), <b>Multistrike</b> (melee), <b>Greater Multiple Projectiles</b>, <b>Increased Area of Effect / Concentrated Effect</b>. CwDT + Immortal Call / Molten Shell kombinini kur."},
+ "Harvest'ta Doedre, Maligaro, Shavronne öldür ve Malachai öldür, şehre dön",
+ "Ascent'e gir ve act'i bitir",
+]},
+{title:"ACT 5", steps:[
+ {pass:true,lv:40,t:"Lvl 40 — sonraki ~5 levelde gideceğin pasif puanları"},
+ "Slave Pens geç ve Overseer's Tower gir",
+ "Control Blocks geç ve Miasmeter bul, sonra Oriath Square geç",
+ "Templar Courts geç ve Chamber of Innocence'a gir",
+ "Chamber of Innocence'da High Templar Avarius ile savaş",
+ "Chamber of Innocence'dan Torched Courts geç ve Ruined Square gir",
+ "Ruined Square'da waypoint bul ve Ossuary gir",
+ "Ossuary'de Sign of Purity bul ve şehre dön",
+ "Ruined Square'e gel ve Reliquary gir. Burada 3 tane görev itemi bul ve şehre dön",
+ "Ruined Square'e gel ve Cathedral Rooftop gir",
+ "Kitava öldür ve act'i bitir",
+]},
+{title:"ACT 6", steps:[
+ {pass:true,lv:45,t:"Lvl 45 — sonraki ~5 levelde gideceğin pasif puanları"},
+ "Lioneye's Watch'tan Twilight Strand gir ve bütün canavarları öldür, şehre dön",
+ {gem:true, t:"<b>🔑 LILLY ROTH AÇILDI — nihai gem satıcısı!</b> Lilly artık <b>oyundaki HER gem'i (seviye sınırı yok)</b> satar. Bundan sonra hiçbir gem'i kaçırma derdin kalmaz — build'in için eksik/yükseltme gem ne varsa buradan al. Her act'te Lilly'yi tekrar kontrol et."},
+ "Coast gir ve Mud Flats'a geç ve Dishonoured Queen öldür. Eye of Conquest al",
+ "Eye of Conquest ile Karui Fortress yolunu aç ve gir",
+ "Karui Fortress'ta Tukohama öldür ve Ridge geç",
+ "Ridge'den Lower Prison gir. Labirenti yap ve Shavronne's Tower'a geç",
+ "Shavronne's Tower'da Shavronne öldür ve Prisoner's Gate geç",
+ "Prisoner's Gate'de Abberath öldür ve Western Forest gir",
+ "Western Forest'tan Riverways'e geç ve Wetlands'e gir",
+ "Wetlands'de Ryslatha öldür ve şehre dön",
+ "Riverways git, Southern Forest geç, Cavern of Anger gir",
+ "Cavern of Anger girişinde Black Flag al ve Beacon'a geç",
+ "Beacon'da en sona git ve Brine King's Reef gir",
+ "Brine King öldür ve act'i bitir",
+]},
+{title:"ACT 7", steps:[
+ {pass:true,lv:50,t:"Lvl 50 — sonraki ~5 levelde gideceğin pasif puanları"},
+ "Bridge Encampment merkezinden Broken Bridge geç ve Crossroads gir, waypoint bul",
+ "Crossroads waypointten Fellshrine Ruins'e git ve Crypt gir",
+ "Crypt'te labirent yap ve sonundaki Maligaro's Map al, şehre dön",
+ "Crossroads'dan Chamber of Sins Level 1 git ve waypoint bul",
+ "Maligaro's Map'i map device'a koy ve içerde Maligaro öldür",
+ "Chamber of Sins 1'e geri dön ve Silk ile konuş. Chamber of Sins 2 gir",
+ "Chamber of Sins 2 labirenti yap ve Den'e geç, Ashen Fields'a gir",
+ "Ashen Fields'tan Northern Forest'a geç ve Dread Thicket gir",
+ "Dread Thicket'ta Firefly topla ve Gruthkul öldür, şehre dön",
+ "Northern Forest'a git, Causeway gir ve Kishara's Star bul. Vaal City gir, Yeena bul",
+ "Temple of Decay 1 ve 2 geç ve Arakaali öldür ve act'i bitir",
+ "Aspirant's Plaza'ya ışınlan ve 55 level (Cruel) Labirenti yap. Eksik labirent varsa tamamla",
+]},
+{title:"ACT 8", steps:[
+ {pass:true,lv:55,t:"Lvl 55 — sonraki ~5 levelde gideceğin pasif puanları"},
+ "Sarn Ramparts geç ve Sarn Encampment merkeze gir",
+ "Toxic Conduits gir ve Doedre's Cesspool'a geç ve Doedre öldür",
+ "Quay geç ve giriş kısmındaki adada Ankh of Eternity al ve Tolman'ı bul. Görevi yap ve Grain Gate gir",
+ "Grain Gate Gemling'leri öldür ve Imperial Fields'a geç, Solaris Temple Level 1'i geç, Solaris Temple 2 geç",
+ "Solaris Temple 2'de Dawn, Harbinger of Solaris öldür ve Sun Orb al",
+ "Doedre's Cesspool'dan Grand Promenade geç ve The Bath House'a gir. Labirenti yap ve High Gardens gir",
+ "High Gardens'da Yugul öldür ve şehre dön",
+ "Bath House'a ışınlan ve Lunaris Concourse geç, Lunaris Temple Level 1 geç ve Lunaris Temple Level 2 gir",
+ "Lunaris Temple Level 2'de Dusk, Harbinger of Lunaris öldür, Moon Orb al",
+ "Lunaris Concourse'a ışınlan ve Harbour Bridge gir. Lunaris ve Solaris öldür ve act'i bitir",
+]},
+{title:"ACT 9", steps:[
+ "Blood Aqueduct geç ve Highgate merkeze gir",
+ "Descent gir ve Vastiri Desert'e gir, waypoint bul",
+ {pass:true,lv:60,t:"Lvl 60 — sonraki ~5 levelde gideceğin pasif puanları"},
+ "Vastiri Desert'da Storm Blade bul ve Foothills gir. Waypoint bul ve şehre dön",
+ "Vastiri Desert'a ışınlan ve Oasis gir. Shakari öldür, şehre dön",
+ "Foothills'e ışınlan ve Boiling Lake'e gir. Basilisk öldür ve Basilisk Acid al, şehre dön",
+ "Foothills'e ışınlan ve Tunnel gir. Labirenti yap ve Quarry geç, waypoint ve Sin bul",
+ "Quarry'den Refinery geç, General Adus öldür ve Trarthan Powder al",
+ "Quarry'de Garukhan odasını bul ve öldür. Sekhema's Feather al ve şehre dön",
+ "Quarry'e ışınlan ve Belly of the Beast gir ve Rotting Core gir",
+ "Rotting Core'da 3 taraftaki bossları öldür ve Depraved Trinity öldür, act'i bitir",
+]},
+{title:"ACT 10", steps:[
+ {pass:true,lv:65,t:"Lvl 65 — sonraki ~5 levelde gideceğin pasif puanları"},
+ "Oriath Docks merkezden Cathedral Rooftop'a gir. Girişte Innocence bul ve Ravaged Square geç",
+ "Ravaged Square'dan Torched Courts'a geç ve Desecrated Chambers'a gir",
+ "Desecrated Chambers Innocence öldür ve The Staff of Purity al",
+ "Ravaged Square'a ışınlan ve Control Blocks git, Vilenta öldür ve şehre dön",
+ "Ravaged Square git ve Ossuary gir, labirent yap",
+ {pass:true,lv:68,t:"Lvl 68 — son pasif puanlarını dağıt (act'ler burada biter)"},
+ "Aspirant's Plaza'ya ışınlan ve 68 level (Merciless) Labirenti yap. Eksik labirent varsa tamamla",
+ "Ravaged Square git ve Canals geç ve Feeding Trough'a geç. Kitava öldür ve act'leri bitir",
+]},
+];
+
+/* ============ İNGİLİZCE METİNLER (DATA ile birebir aynı sırada) ============ */
+const EN=[
+[ // ACT 1
+ "Kill Hillock, enter town",
+ "Lvl 1 — passive points for the next ~5 levels",
+ "Check vendors and enter The Coast, find the waypoint and enter The Mud Flats",
+ "Find the 3 quest items in The Mud Flats and enter Submerged Passage",
+ "<b>This quest (Breaking Some Eggs) unlocks Frostblink!</b> Back in town (or at your next vendor visit) buy <b>Frostblink</b> (lvl 4) from Nessa and use it <b>throughout all of Act 1</b>. <b>Dash</b> (lvl 4) also unlocks here. Movement skills (Flame Dash/Leap Slam) come later at lvl 10, from Brutus.",
+ "In Submerged Passage teleport to The Coast via the waypoint and go to Tidal Island",
+ "Kill Hailrake at the end of Tidal Island and return to town",
+ "Check vendors and teleport to Submerged Passage",
+ "In Submerged Passage find the bridge, place a Portal and cross to The Ledge",
+ "From The Ledge go through The Climb and enter The Lower Prison. Find the waypoint, return to town and take the portal",
+ "Lvl 5 — passive points for the next ~5 levels",
+ "In Submerged Passage find the Flooded Depths, kill Dweller of the Deep and return to town",
+ "Check vendors and teleport to The Lower Prison. Do the trial (labyrinth) and go to The Upper Prison",
+ "In The Upper Prison find the flask spot and kill Brutus, return to town",
+ "Lvl 10 — passive points for the next ~5 levels",
+ "<b>Brutus (The Caged Brute) unlocks your MOVEMENT skill (lvl 10).</b> In town buy the one that fits your build from Nessa: <b>Flame Dash</b> (caster), <b>Leap Slam</b> (melee), <b>Whirling Blades</b> (daggers/claws), <b>Blink Arrow</b> (bow). Also check the new support gems.",
+ "Teleport to Prisoner's Gate and enter The Ship Graveyard",
+ "In The Ship Graveyard find the waypoint, find the Cave entrance and place a portal, find the Cavern of Wrath entrance and enter",
+ "From Cavern of Wrath return to town, take the portal and enter the Cave. Grab the item at the end and leave",
+ "Kill Fairgraves, return to town and check vendors",
+ "Go through Cavern of Wrath and Cavern of Anger, kill Merveil and enter the gate behind her",
+],
+[ // ACT 2
+ "From The Southern Forest we enter The Forest Encampment",
+ "Enter The Old Fields. On the way enter The Den and kill the White Beast, then return to The Old Fields",
+ "Enter The Crossroads. Find the waypoint and enter Chamber of Sins Level 1, find the waypoint and enter Chamber of Sins Level 2",
+ "Lvl 15 — passive points for the next ~5 levels",
+ "Do the trial (labyrinth) in Chamber of Sins Level 2 and kill Fidelitas, return to town",
+ "<b>After Fidelitas, check the vendor (lvl 16 gems).</b> Buy the <b>Herald</b> that fits your build — <b>Herald of Ice</b> (cold), <b>Herald of Thunder</b> (lightning), <b>Herald of Ash</b> (fire/melee), <b>Herald of Agony/Purity</b> (poison/physical). Also check for missing support gems.",
+ "Talk to the vendors, teleport to The Crossroads and enter The Broken Bridge. Kill Kraityn and return to town",
+ "Go to The Crossroads, enter Fellshrine Ruins and enter The Crypt Level 1",
+ "Do the trial (labyrinth) in The Crypt Level 1 and enter The Crypt Level 2",
+ "In The Crypt Level 2 grab the Golden Hand item and return to town",
+ "Enter The Riverways, find the waypoint and enter The Western Forest. Find the waypoint and enter The Weaver's Chamber",
+ "In The Weaver's Chamber kill the Weaver boss and return to town",
+ "Lvl 20 — passive points for the next ~5 levels",
+ "<b>After Weaver, check the vendor (lvl 18 gems).</b> Buy key supports for your build: <b>Controlled Destruction, Elemental Focus, Hypothermia, Combustion, Faster Attacks, Faster Projectiles, Elemental Damage with Attacks, Added Cold/Fire/Lightning Damage</b>. Push your main skill toward a 4-link.",
+ "Return to The Western Forest. Kill Alira and kill the boss at the end to open the path",
+ "Teleport to The Riverways and enter The Wetlands. Kill Oak, find the waypoint and return to town",
+ "Return to The Wetlands and enter the Vaal Ruins, then in order go to The Northern Forest, The Caverns and The Ancient Pyramid",
+ "At the very end kill the Vaal Oversoul and finish the act",
+],
+[ // ACT 3
+ "In The City of Sarn rescue Clarissa, talk to her and enter town",
+ "Enter The Slums and proceed to The Crematorium",
+ "In The Crematorium do the trial (labyrinth), fight Piety, grab Tolman's item and return to town",
+ "<b>After Piety, check the vendor (lvl 24 gems) → AURA time!</b> Buy the aura that fits your build: <b>Hatred</b> (phys→cold), <b>Wrath</b> (lightning), <b>Anger</b> (fire), <b>Grace</b> (evasion), <b>Determination</b> (armour), <b>Discipline</b> (energy shield), <b>Malevolence/Zealotry/Pride</b>. Also <b>Clarity/Vitality/Precision</b> (mana/life/accuracy).",
+ "In town get the item from Clarissa, enter The Slums and proceed to The Sewers",
+ "In The Sewers find the 3 statues and enter The Marketplace",
+ "Lvl 25 — passive points for the next ~5 levels",
+ "In The Marketplace find the waypoint, enter The Catacombs. Do the trial (labyrinth), return to town",
+ "From The Marketplace enter The Battlefront, find the waypoint and grab the quest item next to it",
+ "From The Battlefront enter The Docks and find the Thaumetic Sulphite item",
+ "From The Battlefront go to Solaris Temple Level 1 and 2. At the very end talk to Dialla",
+ "Go to The Sewers and enter The Ebony Barracks",
+ "From The Ebony Barracks go to Lunaris Temple Level 1 and 2. At the end kill Piety",
+ "Lvl 30 — passive points for the next ~5 levels",
+ "From The Ebony Barracks enter The Imperial Gardens, do the trial (labyrinth), enter The Sceptre of God",
+ "🔑 Near The Imperial Gardens enter The Library. Take the 'A Fixture of Fate' quest, collect the 4 Golden Pages in The Archives and give them to Siosa",
+ "<b>🔑 SIOSA UNLOCKED — THE MOST IMPORTANT GEM STOP!</b> Siosa now sells <b>every gem (up to lvl 31), in ALL colours and for ALL classes</b>. Buy <b>ALL</b> the skill + support gems your build is missing right now (whatever you skipped so far). It's also the most efficient gem-shopping spot for your future characters.",
+ "At the end of The Sceptre of God kill Dominus and finish the act",
+ "Click the statue in the Act 3 town center, teleport to Aspirant's Plaza and do the Normal Labyrinth (get your Ascendancy points). Complete any missing trial first",
+],
+[ // ACT 4
+ "Go through The Aqueduct and enter Highgate. From Highgate proceed to The Dried Lake",
+ "Go through Mines Level 1 and 2; in Mines Level 2 find Deshret's Spirit and proceed to The Crystal Veins",
+ "Find the waypoint in The Crystal Veins",
+ "Lvl 35 — passive points for the next ~5 levels",
+ "From Daresso's Dream proceed to The Grand Arena. Kill Daresso and take the Eye of Desire",
+ "From Kaom's Dream proceed to Kaom's Stronghold. Kill Kaom and take The Eye of Fury",
+ "Return to The Crystal Veins. Enter Belly of the Beast Level 1 and 2",
+ "In Belly of the Beast Level 2 kill Piety and enter The Harvest",
+ "<b>After Dialla (Belly of the Beast), check the vendor (lvl 38 gems).</b> Buy: <b>Cast when Damage Taken</b> (for a CwDT setup), <b>Spell Echo</b> (caster), <b>Multistrike</b> (melee), <b>Greater Multiple Projectiles</b>, <b>Increased Area of Effect / Concentrated Effect</b>. Set up the CwDT + Immortal Call / Molten Shell combo.",
+ "In The Harvest kill Doedre, Maligaro, Shavronne and then Malachai, return to town",
+ "Enter The Ascent and finish the act",
+],
+[ // ACT 5
+ "Lvl 40 — passive points for the next ~5 levels",
+ "Go through The Slave Pens and enter The Overseer's Tower",
+ "Go through The Control Blocks and find the Miasmeter, then proceed to Oriath Square",
+ "Go through The Templar Courts and enter The Chamber of Innocence",
+ "In The Chamber of Innocence fight High Templar Avarius",
+ "From The Chamber of Innocence go through The Torched Courts and enter The Ruined Square",
+ "In The Ruined Square find the waypoint and enter The Ossuary",
+ "In The Ossuary find the Sign of Purity and return to town",
+ "Come to The Ruined Square and enter The Reliquary. Find the 3 quest items here and return to town",
+ "Come to The Ruined Square and enter The Cathedral Rooftop",
+ "Kill Kitava and finish the act",
+],
+[ // ACT 6
+ "Lvl 45 — passive points for the next ~5 levels",
+ "From Lioneye's Watch enter The Twilight Strand and kill all the monsters, return to town",
+ "<b>🔑 LILLY ROTH UNLOCKED — the ultimate gem vendor!</b> Lilly now sells <b>EVERY gem in the game (no level limit)</b>. From now on you'll never worry about missing a gem — buy any missing/upgrade gem for your build here. Check Lilly again every act.",
+ "Enter The Coast, proceed to The Mud Flats and kill the Dishonoured Queen. Take the Eye of Conquest",
+ "Use the Eye of Conquest to open the path to The Karui Fortress and enter",
+ "In The Karui Fortress kill Tukohama and go through The Ridge",
+ "From The Ridge enter The Lower Prison. Do the trial (labyrinth) and proceed to Shavronne's Tower",
+ "In Shavronne's Tower kill Shavronne and go through Prisoner's Gate",
+ "At Prisoner's Gate kill Abberath and enter The Western Forest",
+ "From The Western Forest proceed to The Riverways and enter The Wetlands",
+ "In The Wetlands kill Ryslatha and return to town",
+ "Go to The Riverways, through The Southern Forest, enter The Cavern of Anger",
+ "At the entrance of The Cavern of Anger take the Black Flag and proceed to The Beacon",
+ "In The Beacon go to the very end and enter The Brine King's Reef",
+ "Kill the Brine King and finish the act",
+],
+[ // ACT 7
+ "Lvl 50 — passive points for the next ~5 levels",
+ "From the Bridge Encampment center go through The Broken Bridge and enter The Crossroads, find the waypoint",
+ "From The Crossroads waypoint go to Fellshrine Ruins and enter The Crypt",
+ "In The Crypt do the trial (labyrinth) and take Maligaro's Map at the end, return to town",
+ "From The Crossroads go to Chamber of Sins Level 1 and find the waypoint",
+ "Put Maligaro's Map in the map device and kill Maligaro inside",
+ "Return to Chamber of Sins Level 1 and talk to Silk. Enter Chamber of Sins Level 2",
+ "Do the trial (labyrinth) in Chamber of Sins Level 2, go through The Den and enter The Ashen Fields",
+ "From The Ashen Fields proceed to The Northern Forest and enter The Dread Thicket",
+ "In The Dread Thicket collect the Fireflies and kill Gruthkul, return to town",
+ "Go to The Northern Forest, enter The Causeway and find Kishara's Star. Enter The Vaal City, find Yeena",
+ "Go through Temple of Decay Level 1 and 2, kill Arakaali and finish the act",
+ "Teleport to Aspirant's Plaza and do the level 55 (Cruel) Labyrinth. Complete any missing labyrinth",
+],
+[ // ACT 8
+ "Lvl 55 — passive points for the next ~5 levels",
+ "Go through The Sarn Ramparts and enter the Sarn Encampment center",
+ "Enter The Toxic Conduits, proceed to Doedre's Cesspool and kill Doedre",
+ "Go through The Quay and on the island near the entrance take the Ankh of Eternity and find Tolman. Do the quest and enter The Grain Gate",
+ "At The Grain Gate kill the Gemlings and proceed to The Imperial Fields; go through Solaris Temple Level 1 and Solaris Temple Level 2",
+ "In Solaris Temple Level 2 kill Dawn, Harbinger of Solaris and take the Sun Orb",
+ "From Doedre's Cesspool go through The Grand Promenade and enter The Bath House. Do the trial (labyrinth) and enter The High Gardens",
+ "In The High Gardens kill Yugul and return to town",
+ "Teleport to The Bath House and go through The Lunaris Concourse, through Lunaris Temple Level 1 and enter Lunaris Temple Level 2",
+ "In Lunaris Temple Level 2 kill Dusk, Harbinger of Lunaris and take the Moon Orb",
+ "Teleport to The Lunaris Concourse and enter The Harbour Bridge. Kill Lunaris and Solaris and finish the act",
+],
+[ // ACT 9
+ "Go through The Blood Aqueduct and enter the Highgate center",
+ "Enter The Descent and enter The Vastiri Desert, find the waypoint",
+ "Lvl 60 — passive points for the next ~5 levels",
+ "In The Vastiri Desert find the Storm Blade and enter The Foothills. Find the waypoint and return to town",
+ "Teleport to The Vastiri Desert and enter The Oasis. Kill Shakari, return to town",
+ "Teleport to The Foothills and enter The Boiling Lake. Kill the Basilisk and take the Basilisk Acid, return to town",
+ "Teleport to The Foothills and enter The Tunnel. Do the trial (labyrinth) and go through The Quarry, find the waypoint and Sin",
+ "From The Quarry go through The Refinery, kill General Adus and take the Trarthan Powder",
+ "In The Quarry find Garukhan's room and kill her. Take Sekhema's Feather and return to town",
+ "Teleport to The Quarry and enter Belly of the Beast, then enter The Rotting Core",
+ "In The Rotting Core kill the bosses on the 3 sides and kill the Depraved Trinity, finish the act",
+],
+[ // ACT 10
+ "Lvl 65 — passive points for the next ~5 levels",
+ "From the Oriath Docks center enter The Cathedral Rooftop. At the entrance find Innocence and go through The Ravaged Square",
+ "From The Ravaged Square proceed to The Torched Courts and enter The Desecrated Chambers",
+ "In The Desecrated Chambers kill Innocence and take The Staff of Purity",
+ "Teleport to The Ravaged Square and go to The Control Blocks, kill Vilenta and return to town",
+ "Go to The Ravaged Square and enter The Ossuary, do the trial (labyrinth)",
+ "Lvl 68 — allocate your final passive points (acts end here)",
+ "Teleport to Aspirant's Plaza and do the level 68 (Merciless) Labyrinth. Complete any missing labyrinth",
+ "Go to The Ravaged Square, through The Canals and proceed to The Feeding Trough. Kill Kitava and finish the acts",
+],
+];
+const EN_NOTES=[null,null,null,null,null,null,null,null,null,null]; // notlar artık görev olarak eklendi
+
+/* ============ GEM VERİTABANI (dropdown için) ============ */
+const GEMS=[
+// Hareket
+"Flame Dash","Frostblink","Leap Slam","Whirling Blades","Shield Charge","Dash","Blink Arrow","Mirror Arrow","Lightning Warp","Smoke Mine","Withering Step","Phase Run","Convocation",
+// Yakın dövüş (melee)
+"Cleave","Double Strike","Dual Strike","Ground Slam","Heavy Strike","Glacial Hammer","Ice Crash","Infernal Blow","Lacerate","Sunder","Sweep","Earthquake","Earthshatter","Tectonic Slam","Perforate","Consecrated Path","Dominating Blow","Smite","Static Strike","Frost Blades","Molten Strike","Wild Strike","Viper Strike","Pestilent Strike","Bladestorm","Blade Flurry","Cyclone","Reave","Flicker Strike","Frenzy","Shield Crush","Boneshatter","Volcanic Fissure","Rage Vortex","Charged Dash","Lightning Strike","Spectral Throw","Spectral Helix","Splitting Steel","Shattering Steel","Lancing Steel","Elemental Hit",
+// Yay (bow)
+"Ice Shot","Rain of Arrows","Split Arrow","Tornado Shot","Lightning Arrow","Burning Arrow","Explosive Arrow","Caustic Arrow","Toxic Rain","Scourge Arrow","Barrage","Blast Rain","Puncture","Shrapnel Ballista","Artillery Ballista","Siege Ballista","Ensnaring Arrow","Snipe","Galvanic Arrow","Storm Rain",
+// Ateş büyüleri
+"Fireball","Firestorm","Flameblast","Incinerate","Fire Trap","Flame Wall","Flame Surge","Scorching Ray","Rolling Magma","Magma Orb","Wave of Conviction","Armageddon Brand","Purifying Flame","Holy Flame Totem","Righteous Fire","Blazing Salvo","Fire Nova Mine",
+// Soğuk büyüleri
+"Ice Nova","Frostbolt","Freezing Pulse","Glacial Cascade","Ice Spear","Cold Snap","Vortex","Frost Bomb","Winter Orb","Creeping Frost","Hydrosphere","Icicle Mine","Frost Wall","Eye of Winter",
+// Şimşek büyüleri
+"Spark","Arc","Ball Lightning","Lightning Tendrils","Shock Nova","Storm Call","Storm Brand","Orb of Storms","Lightning Trap","Crackling Lance","Galvanic Field","Kinetic Bolt","Kinetic Blast",
+// Fiziksel / Kaos büyüleri
+"Bladefall","Blade Vortex","Ethereal Knives","Contagion","Essence Drain","Bane","Soulrend","Dark Pact","Volatile Dead","Detonate Dead","Cremation","Unearth","Spectral Shield Throw","Void Sphere","Exsanguinate","Reap","Forbidden Rite","Wintertide Brand","Penance Brand","Arcanist Brand","Poisonous Concoction","Explosive Concoction",
+// Totem / haykırış (warcry) / koruma
+"Ancestral Warchief","Ancestral Protector","Searing Bond","Shockwave Totem","Enduring Cry","Ancestral Cry","Infernal Cry","Intimidating Cry","Rallying Cry","Seismic Cry","General's Cry","Battlemage's Cry","Molten Shell","Immortal Call","Steelskin","Bone Armour","Arctic Armour","Blood Rage","Berserk","Sigil of Power","Petrified Blood","Corrupting Fever",
+// Minyonlar
+"Raise Zombie","Raise Spectre","Summon Skeletons","Vaal Summon Skeletons","Summon Raging Spirit","Animate Guardian","Animate Weapon","Summon Carrion Golem","Summon Stone Golem","Summon Flame Golem","Summon Ice Golem","Summon Lightning Golem","Summon Chaos Golem","Summon Holy Relic","Summon Skitterbots","Absolution","Bone Offering","Flesh Offering","Spirit Offering","Desecrate",
+// Auralar
+"Anger","Hatred","Wrath","Determination","Grace","Discipline","Vitality","Clarity","Precision","Malevolence","Zealotry","Pride","Haste","Purity of Elements","Purity of Fire","Purity of Ice","Purity of Lightning","War Banner","Dread Banner","Defiance Banner","Flesh and Stone",
+// Herald'lar
+"Herald of Ash","Herald of Ice","Herald of Thunder","Herald of Agony","Herald of Purity",
+// Lanetler (curse)
+"Assassin's Mark","Conductivity","Despair","Elemental Weakness","Enfeeble","Flammability","Frostbite","Poacher's Mark","Punishment","Temporal Chains","Vulnerability","Warlord's Mark","Sniper's Mark",
+// Support gemler
+"Added Fire Damage","Added Cold Damage","Added Lightning Damage","Added Chaos Damage","Elemental Damage with Attacks","Melee Physical Damage","Ruthless","Melee Splash","Multistrike","Ancestral Call","Fortify","Close Combat","Impale","Brutality","Chance to Bleed","Bloodlust","Maim","Pulverise","Damage on Full Life","Volatility","Faster Attacks","Faster Casting","Increased Critical Strikes","Increased Critical Damage","Inspiration","Trinity","Elemental Focus","Controlled Destruction","Fire Penetration","Cold Penetration","Lightning Penetration","Hypothermia","Bonechill","Combustion","Ignite Proliferation","Immolate","Innervate","Burning Damage","Concentrated Effect","Increased Area of Effect","Spell Echo","Unleash","Intensify","Arcane Surge","Archmage","Energy Leech","Empower","Enlighten","Enhance","Greater Multiple Projectiles","Lesser Multiple Projectiles","Faster Projectiles","Slower Projectiles","Pierce","Fork","Chain","Point Blank","Volley","Vicious Projectiles","Deadly Ailments","Swift Affliction","Void Manipulation","Efficacy","Unbound Ailments","Withering Touch","Vile Toxins","Cruelty","Physical to Lightning","Cold to Fire","Minion Damage","Minion Life","Minion Speed","Meat Shield","Feeding Frenzy","Predator","Summon Phantasm","Infernal Legion","Spell Cascade","Spell Totem","Ballista Totem Support","Multiple Totems","Trap","Cluster Traps","Trap and Mine Damage","Minefield","High-Impact Mine","Swift Assembly","Cast on Critical Strike","Cast when Damage Taken","Cast on Death","Cast while Channelling","Blasphemy","Hextouch","Culling Strike","Life Leech","Life Gain on Hit","Mana Leech","Blind","Knockback","Chance to Poison","Increased Duration","Less Duration","Second Wind","Elemental Army","Guardian's Blessing","Divine Blessing","Generosity","Awakened Added Fire Damage","Awakened Spell Echo","Awakened Multistrike","Awakened Brutality","Awakened Elemental Focus","Awakened Controlled Destruction","Awakened Greater Multiple Projectiles","Awakened Deadly Ailments","Awakened Void Manipulation","Awakened Unbound Ailments","Awakened Fire Penetration","Awakened Cold Penetration","Awakened Lightning Penetration","Awakened Chain","Awakened Fork","Awakened Cast On Critical Strike","Awakened Blasphemy","Awakened Hextouch","Awakened Burning Damage","Empower"
+];
+let userGems=JSON.parse(localStorage.getItem("poe_guide_gems_v2")||"{}");
+function saveGems(){localStorage.setItem("poe_guide_gems_v2",JSON.stringify(userGems));}
+function escAttr(s){return String(s).replace(/"/g,"&quot;");}
+function chipsHTML(a,s){
+  return (userGems[id(a,s)]||[]).map((g,i)=>`<span class="gemchip">${g}<b onclick="removeGem(${a},${s},${i})" title="Sil / Remove">✕</b></span>`).join("");
+}
+function gemBoxHTML(a,s,pass){
+  const lbl=pass?T("myPass"):T("myGems");
+  const ph=pass?T("passAddPh"):T("addGemPh");
+  return `<div class="gembox${pass?" pass":""}" onclick="event.stopPropagation()">
+    <div class="usergems-lbl">${lbl}</div>
+    <div class="usergems" id="gems_${a}_${s}">${chipsHTML(a,s)}</div>
+    <div class="gemadd">
+      <input class="geminput"${pass?"":' list="gemdb"'} placeholder="${escAttr(ph)}" onkeydown="if(event.key==='Enter'){addGemFromInput(${a},${s},this);event.preventDefault();}">
+      <button onclick="addGemFromInput(${a},${s},this)">＋ ${T("addGem")}</button>
+    </div>
+  </div>`;
+}
+function renderUserGems(a,s){const el=document.getElementById("gems_"+a+"_"+s);if(el)el.innerHTML=chipsHTML(a,s);}
+// Pasif = görev değil, görevler arasına giren bilgilendirme bloğu
+function passInfoHTML(a,s){
+  return `<div class="passinfo">
+    <div class="passinfo-head">
+      <span class="passbadge">🌳 ${T("passBadge")}</span>
+      <span class="passinfo-txt">${txtOf(a,s)}</span>
+    </div>
+    ${gemBoxHTML(a,s,true)}
+  </div>`;
+}
+function addGemFromInput(a,s,el){
+  const box=el.closest(".gembox");const inp=box.querySelector(".geminput");
+  const name=(inp.value||"").trim();if(!name)return;
+  userGems[id(a,s)]=userGems[id(a,s)]||[];
+  if(!userGems[id(a,s)].includes(name))userGems[id(a,s)].push(name);
+  saveGems();inp.value="";renderUserGems(a,s);inp.focus();
+}
+function removeGem(a,s,i){
+  const key=id(a,s);
+  if(userGems[key]){userGems[key].splice(i,1);if(!userGems[key].length)delete userGems[key];saveGems();renderUserGems(a,s);}
+}
+function buildGemDatalist(){
+  const dl=document.getElementById("gemdb");if(!dl)return;
+  dl.innerHTML=[...new Set(GEMS)].sort().map(g=>`<option value="${escAttr(g)}">`).join("");
+}
+
+/* ============ DİL (i18n) ============ */
+let lang=localStorage.getItem("poe_guide_lang")||"tr";
+const UI={
+ tr:{title:"⚔ PoE Başlangıç: ACT'ler", goNow:"▶ Şu ana git", expand:"Hepsini aç", collapse:"Hepsini kapat",
+  reset:"↺ Sıfırla", search:"🔎 Ara (boss, item, alan...)",
+  legendV:"🛒 Satıcı kontrol", legendG:"💎 Gem alışverişi", legendN:"◀ Şu anki adım",
+  autoStart:"▶ Otomatik başlat", pause:"⏸ Duraklat", addTime:"+30sn", skip:"⏭ Atla",
+  target:"🎯 Hedef: ", eta:"Kalan tahmini: ", allDone:"🎉 Tüm görevler tamamlandı!",
+  hours:"saat", vBadge:"🛒 SATICI", gBadge:"💎 GEM AL",
+  myGems:"🛒 Bu görevde alınacak gemlerin:", addGem:"Ekle", addGemPh:"Gem ara veya yaz…",
+  passTitle:"🌳 Pasif Ağaç Planı (opsiyonel)", passAddPh:"Pasif düğüm / notable / keystone yaz…",
+  passSub:"Her 5 levelde bir kilometre taşı (Act'ler ~68'de biter). İlgili levele gelince alman gereken pasif düğümleri buraya yaz; o levele ulaşınca kutuyu işaretle.",
+  passBadge:"PASİF", myPass:"🌳 Önündeki ~5 levelde gideceğin pasif düğümler:",
+  overrun:"⏱ Uzama:", overTotal:"Σ Toplam sapma:", editHint:"Metni düzenle (Enter: kaydet · Esc: iptal)",
+  backupExport:"⬇ Yedekle", backupImport:"⬆ Geri yükle",
+  importConfirm:"Yedek geri yüklensin mi? Mevcut tüm verilerin bununla değiştirilecek.", importError:"Geçersiz yedek dosyası.",
+  pickTitle:"🎯 Hedef süreni seç",
+  pickSub:"Tüm kampanyayı (Act 1–10) kaç saatte bitirmek istiyorsun? Uygulama tüm görev sürelerini buna göre ayarlar.",
+  custom:"Özel:", unit:"dk", apply:"Uygula", close:"Kapat", recommended:"ÖNERİLEN",
+  footer:'İlerlemen otomatik kaydedilir · <a href="kilavuz.html" style="color:#4a9fd4">📘 Kullanım Kılavuzu</a> · Labirentler: <a href="https://www.poelab.com/" target="_blank" style="color:#4a9fd4">poelab.com</a><br><span style="opacity:.6">Gayri resmî fan aracı · Path of Exile, Grinding Gear Games\'in ticari markasıdır (GGG ile bağlantılı/onaylı değildir).</span>',
+  resetConfirm:"Tüm ilerleme silinsin mi? (Baştan başlar)",
+  descs:["🐇 Çok hızlı · tecrübeli","Hızlı","Tempolu","Normal","Rahat","🐢 Sakin","Çok sakin · yeni oyuncu"]},
+ en:{title:"⚔ PoE Leveling: Acts", goNow:"▶ Go to current", expand:"Expand all", collapse:"Collapse all",
+  reset:"↺ Reset", search:"🔎 Search (boss, item, area...)",
+  legendV:"🛒 Vendor check", legendG:"💎 Gem shopping", legendN:"◀ Current step",
+  autoStart:"▶ Auto start", pause:"⏸ Pause", addTime:"+30s", skip:"⏭ Skip",
+  target:"🎯 Target: ", eta:"Est. remaining: ", allDone:"🎉 All tasks completed!",
+  hours:"h", vBadge:"🛒 VENDOR", gBadge:"💎 BUY GEM",
+  myGems:"🛒 Gems to buy at this step:", addGem:"Add", addGemPh:"Search or type a gem…",
+  passTitle:"🌳 Passive Tree Plan (optional)", passAddPh:"Type a passive node / notable / keystone…",
+  passSub:"A milestone every 5 levels (acts end ~68). Write the passive nodes to allocate by that level; tick the box when you reach it.",
+  passBadge:"PASSIVE", myPass:"🌳 Passive nodes for the next ~5 levels:",
+  overrun:"⏱ Overrun:", overTotal:"Σ Total drift:", editHint:"Edit text (Enter: save · Esc: cancel)",
+  backupExport:"⬇ Backup", backupImport:"⬆ Restore",
+  importConfirm:"Restore this backup? All your current data will be replaced.", importError:"Invalid backup file.",
+  pickTitle:"🎯 Choose your target time",
+  pickSub:"How many hours do you want to finish the whole campaign (Acts 1–10) in? The app scales all task durations accordingly.",
+  custom:"Custom:", unit:"min", apply:"Apply", close:"Close", recommended:"RECOMMENDED",
+  footer:'Progress is saved automatically · <a href="kilavuz.html" style="color:#4a9fd4">📘 User Guide</a> · Labyrinth: <a href="https://www.poelab.com/" target="_blank" style="color:#4a9fd4">poelab.com</a><br><span style="opacity:.6">Unofficial fan tool · Path of Exile is a trademark of Grinding Gear Games (not affiliated with or endorsed by GGG).</span>',
+  resetConfirm:"Delete all progress? (Starts over)",
+  descs:["🐇 Very fast · experienced","Fast","Brisk","Normal","Relaxed","🐢 Calm","Very calm · new player"]}
+};
+function T(k){return UI[lang][k];}
+// Görüntü metni (dile göre) ve Türkçe metin (süre/satıcı için)
+function trOf(a,s){const r=DATA[a].steps[s];return typeof r==="object"?r.t:r;}
+function txtOf(a,s){return lang==="en"?EN[a][s]:trOf(a,s);}
+function gemOf(a,s){const r=DATA[a].steps[s];return typeof r==="object"&&r.gem;}
+function passOf(a,s){const r=DATA[a].steps[s];return (typeof r==="object"&&r.pass)?r.lv:null;}
+function notesOf(a){return lang==="en"?(EN_NOTES[a]||[]):(DATA[a].note||[]);}
+// Kullanıcının düzenlediği görev metinleri (dile göre, tarayıcıda saklanır)
+let textOverrides=JSON.parse(localStorage.getItem("poe_guide_textedit")||"{}");
+function saveTextOverrides(){localStorage.setItem("poe_guide_textedit",JSON.stringify(textOverrides));}
+function dispText(a,s){const k=lang+"|"+id(a,s);return (k in textOverrides)?textOverrides[k]:txtOf(a,s);}
+
+/* ============ STATE ============ */
+const KEY="poe_guide_v3";
+let state=JSON.parse(localStorage.getItem(KEY)||"{}");
+let collapsed=JSON.parse(localStorage.getItem(KEY+"_col")||"{}");
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function saveCol(){localStorage.setItem(KEY+"_col",JSON.stringify(collapsed))}
+function id(a,s){return a+"_"+s}
+
+/* ============ PASİF AĞAÇ PLANI (opsiyonel, bağımsız bölüm) ============ */
+const PASSIVE_LEVELS=[1,5,10,15,20,25,30,35,40,45,50,55,60,65,68];
+let passDone=JSON.parse(localStorage.getItem(KEY+"_passdone")||"{}");
+let passPlan=JSON.parse(localStorage.getItem("poe_guide_passives")||"{}");
+let passCol=localStorage.getItem(KEY+"_passcol")!=="0"; // varsayılan: kapalı
+function savePassDone(){localStorage.setItem(KEY+"_passdone",JSON.stringify(passDone));}
+function savePassPlan(){localStorage.setItem("poe_guide_passives",JSON.stringify(passPlan));}
+function passChips(lv){return (passPlan[lv]||[]).map((g,i)=>`<span class="passchip">${g}<b onclick="event.stopPropagation();removePassive(${lv},${i})" title="Sil / Remove">✕</b></span>`).join("");}
+function renderPassive(){
+  const sec=document.getElementById("passive");if(!sec)return;
+  sec.classList.toggle("collapsed",passCol);
+  document.getElementById("passTitle").textContent=T("passTitle");
+  document.getElementById("passSub").textContent=T("passSub");
+  updatePassProg();
+  document.getElementById("passRows").innerHTML=PASSIVE_LEVELS.map(lv=>`
+    <div class="passrow${passDone[lv]?" done":""}" data-lv="${lv}">
+      <span class="box" onclick="togglePassiveDone(${lv})">✔</span>
+      <span class="passlvl" onclick="togglePassiveDone(${lv})">Lvl ${lv}</span>
+      <div class="passgems" id="pass_${lv}">${passChips(lv)}</div>
+      <div class="passadd">
+        <input class="passinput" placeholder="${escAttr(T("passAddPh"))}" onkeydown="if(event.key==='Enter'){addPassive(${lv},this);event.preventDefault();}">
+        <button onclick="addPassive(${lv},this)">＋ ${T("addGem")}</button>
+      </div>
+    </div>`).join("");
+}
+function updatePassProg(){
+  const e=document.getElementById("passProg");if(!e)return;
+  const done=PASSIVE_LEVELS.filter(l=>passDone[l]).length;
+  e.textContent=done+"/"+PASSIVE_LEVELS.length;
+}
+function togglePassive(){passCol=!passCol;localStorage.setItem(KEY+"_passcol",passCol?"1":"0");document.getElementById("passive").classList.toggle("collapsed",passCol);}
+function togglePassiveDone(lv){
+  passDone[lv]=!passDone[lv];savePassDone();
+  const row=document.querySelector('.passrow[data-lv="'+lv+'"]');if(row)row.classList.toggle("done",!!passDone[lv]);
+  updatePassProg();
+}
+function renderPassRow(lv){const el=document.getElementById("pass_"+lv);if(el)el.innerHTML=passChips(lv);}
+function addPassive(lv,el){
+  const inp=el.closest(".passadd").querySelector(".passinput");
+  const name=(inp.value||"").trim();if(!name)return;
+  passPlan[lv]=passPlan[lv]||[];
+  if(!passPlan[lv].includes(name))passPlan[lv].push(name);
+  savePassPlan();inp.value="";renderPassRow(lv);inp.focus();
+}
+function removePassive(lv,i){
+  if(passPlan[lv]){passPlan[lv].splice(i,1);if(!passPlan[lv].length)delete passPlan[lv];savePassPlan();renderPassRow(lv);}
+}
+
+/* ============ SÜRE TAHMİNİ ============ */
+let targetMin=parseFloat(localStorage.getItem(KEY+"_target")||"270"); // hedef toplam süre (dk)
+let tempo=1; // hedeften türetilir (aşağıda)
+// Zorlu / act-sonu / uzun boss'lar (daha çok süre)
+const HARD_BOSS=/(merveil|brutus|vaal oversoul|dominus|malachai|kitava|shavronne|tukohama|abberath|brine king|arakaali|kaom|daresso|izaro|depraved trinity|innocence öldür|avarius|ryslatha|garukhan|basilisk|dawn|dusk|lunaris ve solaris|solaris ve|piety öldür|weaver|fidelitas)/;
+// Uzun / çok bölgeli haritalar (ekstra süre)
+const LONG_MAP=/(sırayla|northern forest, caverns|belly of the beast|solaris temple|lunaris temple|temple of decay|ossuary|reliquary|crystal veins|mines level|vaal ruins|harvest)/;
+function baseSec(t,ai,gem,vend){
+  const s=t.toLowerCase();
+  if(gem) return 90;                                   // alışveriş hatırlatması
+  if(/pasif/.test(s)) return 40;                       // pasif planı işaretleme (hızlı)
+  if(/aspirant/.test(s)) return /68 level/.test(s)?780:(/55 level/.test(s)?660:600); // TAM Ascendancy labirenti (Izaro x3): Merciless>Cruel>Normal
+  if(/labirent/.test(s)) return 360;                   // kampanya trial'ı ~6dk
+  if(HARD_BOSS.test(s)) return ai===0?300:240;         // zorlu boss (Act 1 daha uzun)
+  if(/(öldür|\bkes\b|kesip|savaş)/.test(s)) return ai===0?210:170; // normal kesim
+  if(vend||/şehre dön|şehre gir/.test(s)) return 75;   // şehir/satıcı
+  if(LONG_MAP.test(s)||/3 tane|topla/.test(s)) return 190; // uzun/çok bölgeli
+  return 150;                                          // normal geçiş
+}
+function stepSec(t,ai,gem,vend){return Math.max(20,Math.round(baseSec(t,ai,gem,vend)*tempo));}
+function fmtDur(sec){const m=Math.floor(sec/60),s=sec%60;return m+":"+String(s).padStart(2,"0");}
+// Tüm adımların tempo=1'deki toplam süresi (saniye)
+function totalBaseSec(){
+  let sum=0;
+  DATA.forEach((act,ai)=>act.steps.forEach(raw=>{
+    const isObj=typeof raw==="object";
+    if(isObj&&raw.pass)return;                 // pasif bilgilendirme süreye girmez
+    const t=isObj?raw.t:raw;
+    const gem=isObj&&raw.gem;
+    const vend=!gem&&/sat[iı]c/i.test(t);
+    sum+=baseSec(t,ai,gem,vend);
+  }));
+  return sum;
+}
+// tempo'yu, tüm kampanya = targetMin olacak şekilde ayarla
+function applyTarget(){ tempo=(targetMin*60)/totalBaseSec(); }
+applyTarget();
+
+/* ============ RENDER ============ */
+const app=document.getElementById("app");
+function render(){
+  app.innerHTML="";
+  DATA.forEach((act,ai)=>{
+    const done=act.steps.filter((_,si)=>state[id(ai,si)]).length;
+    const total=act.steps.length;
+    const pct=Math.round(done/total*100);
+    const isCol=collapsed[ai];
+    const el=document.createElement("div");
+    el.className="act"+(isCol?" collapsed":"");
+    el.dataset.act=ai;
+    el.innerHTML=`
+      <div class="act-head" onclick="toggleAct(${ai})">
+        <span class="caret">▼</span>
+        <span class="act-title">${act.title}</span>
+        <div class="act-minibar"><i style="width:${pct}%"></i></div>
+        <span class="act-prog">${done}/${total}</span>
+      </div>
+      <div class="steps">
+        ${(()=>{let n=0;return act.steps.map((raw,si)=>{
+          const gem=gemOf(ai,si);
+          const pass=passOf(ai,si)!=null;
+          const trText=trOf(ai,si);             // süre & satıcı için Türkçe
+          const disp=dispText(ai,si);           // görüntülenecek (düzenlenmişse o, yoksa dile göre)
+          const d=state[id(ai,si)];
+          const vend=!gem&&!pass&&/sat[iı]c/i.test(trText);
+          const label=gem?"💎":(pass?"🌳":(++n));
+          const cls=(d?" done":"")+(pass?" passive":(gem?" gem":(vend?" vendor":"")));
+          const badge=pass?`<span class="passbadge">${T("passBadge")}</span>`
+            :(gem?`<span class="gbadge">${T("gBadge")}</span>`:(vend?`<span class="vbadge">${T("vBadge")}</span>`:""));
+          const dur=pass?5:stepSec(trText,ai,gem,vend);   // pasif = sabit 5 sn
+          return `<div class="step${cls}" data-act="${ai}" data-step="${si}" data-est="${dur}" data-txt="${disp.toLowerCase().replace(/"/g,'')}" onclick="toggle(${ai},${si})">
+            <span class="box">✔</span>
+            <span class="num">${label}</span>
+            <span class="txt">${disp}</span>
+            ${badge}
+            <span class="est">⏱ ${fmtDur(dur)}</span>
+            <button class="editbtn" onclick="event.stopPropagation();editStep(${ai},${si},this)" title="${T("editHint")}">✏️</button>
+            ${(gem||pass)?gemBoxHTML(ai,si,pass):""}
+          </div>`;
+        }).join("")})()}
+        ${notesOf(ai).map(n=>`<div class="note"><span class="ic">📌</span><span>${n}</span></div>`).join("")}
+      </div>`;
+    app.appendChild(el);
+  });
+  updateOverall();
+  markNow();
+}
+
+function updateOverall(){
+  let done=0,total=0;
+  DATA.forEach((act,ai)=>act.steps.forEach((_,si)=>{total++;if(state[id(ai,si)])done++;}));
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById("ov-bar").style.width=pct+"%";
+  document.getElementById("ov-lbl").textContent=pct+"%";
+  document.getElementById("ov-count").textContent=`(${done}/${total})`;
+}
+
+/* İlk tamamlanmamış adımı "ŞU AN" olarak işaretle */
+function markNow(){
+  document.querySelectorAll(".step.now").forEach(e=>e.classList.remove("now"));
+  for(let ai=0;ai<DATA.length;ai++){
+    for(let si=0;si<DATA[ai].steps.length;si++){
+      if(!state[id(ai,si)]){
+        const e=document.querySelector(`.step[data-act="${ai}"][data-step="${si}"]`);
+        if(e)e.classList.add("now");
+        return;
+      }
+    }
+  }
+}
+
+/* ============ ACTIONS ============ */
+// Bir adımın görsel durumunu (checkbox, act mini bar, genel bar, ŞU AN) güncelle
+function applyDoneUI(ai,si){
+  const stepEl=document.querySelector(`.step[data-act="${ai}"][data-step="${si}"]`);
+  if(stepEl)stepEl.classList.toggle("done",!!state[id(ai,si)]);
+  const act=DATA[ai];
+  const done=act.steps.filter((_,s)=>state[id(ai,s)]).length;
+  const actEl=document.querySelector(`.act[data-act="${ai}"]`);
+  if(actEl){
+    actEl.querySelector(".act-minibar>i").style.width=Math.round(done/act.steps.length*100)+"%";
+    actEl.querySelector(".act-prog").textContent=`${done}/${act.steps.length}`;
+  }
+  updateOverall();
+  markNow();
+}
+let editingNow=false;
+function toggle(ai,si){
+  if(editingNow)return;             // metin düzenlenirken tıklama görevi tamamlamasın
+  state[id(ai,si)]=!state[id(ai,si)];
+  save();
+  applyDoneUI(ai,si);
+  syncTimer();      // şu anki görev değişmiş olabilir → timer'ı hizala
+}
+// Görev metnini yerinde düzenle (tarayıcıya kaydedilir)
+function editStep(a,s,btn){
+  const stepEl=btn.closest(".step");
+  const txtEl=stepEl.querySelector(".txt");
+  editingNow=true;
+  txtEl.setAttribute("contenteditable","true");
+  txtEl.classList.add("editing");
+  txtEl.focus();
+  const range=document.createRange();range.selectNodeContents(txtEl);
+  const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);
+  const finish=(save)=>{
+    txtEl.removeEventListener("keydown",onKey);
+    txtEl.removeEventListener("blur",onBlur);
+    txtEl.removeAttribute("contenteditable");
+    txtEl.classList.remove("editing");
+    if(save){
+      const val=(txtEl.innerText||"").replace(/\s+/g," ").trim();
+      const k=lang+"|"+id(a,s);
+      if(val && val!==txtOf(a,s)) textOverrides[k]=val;   // farklıysa kaydet
+      else delete textOverrides[k];                        // orijinale döndüyse override'ı sil
+      saveTextOverrides();
+    }
+    editingNow=false;
+    render();   // metni (ve arama/etiket) tazele
+  };
+  const onKey=(e)=>{ if(e.key==="Enter"){e.preventDefault();finish(true);} else if(e.key==="Escape"){e.preventDefault();finish(false);} };
+  const onBlur=()=>finish(true);
+  txtEl.addEventListener("keydown",onKey);
+  txtEl.addEventListener("blur",onBlur);
+}
+function toggleAct(ai){
+  collapsed[ai]=!collapsed[ai];
+  saveCol();
+  document.querySelector(`.act[data-act="${ai}"]`).classList.toggle("collapsed",collapsed[ai]);
+}
+function expandAll(open){
+  DATA.forEach((_,ai)=>collapsed[ai]=!open);
+  saveCol();render();
+  if(typeof refreshTimerUI==="function")refreshTimerUI();
+}
+function resetAll(){
+  if(confirm(T("resetConfirm"))){
+    state={};save();render();
+    stopTimer();stopOverrun();totalOverrun=0;saveOverTotal();updateOverTotal();remaining=0;curSel=null;syncTimer();
+  }
+}
+/* ---- YEDEKLE / GERİ YÜKLE (dışa-içe aktar) — ileride kaldırılabilir ---- */
+function exportBackup(){
+  const data={};
+  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.indexOf("poe_guide")===0)data[k]=localStorage.getItem(k);}
+  const blob=new Blob([JSON.stringify({app:"poe-leveling",ts:Date.now(),data},null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  const d=new Date(),p=n=>String(n).padStart(2,"0");
+  a.download=`poe-rehberi-yedek-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}.json`;
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function importBackup(input){
+  const f=input.files&&input.files[0]; if(!f){return;}
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const obj=JSON.parse(r.result);
+      const data=(obj&&obj.data&&typeof obj.data==="object")?obj.data:obj;
+      if(!data||typeof data!=="object")throw 0;
+      if(!confirm(T("importConfirm"))){input.value="";return;}
+      Object.keys(data).forEach(k=>{ if(k.indexOf("poe_guide")===0) localStorage.setItem(k,data[k]); });
+      location.reload();
+    }catch(e){ alert(T("importError")); input.value=""; }
+  };
+  r.readAsText(f);
+}
+function goNow(){
+  const el=document.querySelector(".step.now");
+  if(el){
+    const act=el.closest(".act");
+    if(act.classList.contains("collapsed")){toggleAct(+act.dataset.act);}
+    el.scrollIntoView({behavior:"smooth",block:"center"});
+  }else{alert(T("allDone"));}
+}
+function doSearch(q){
+  q=q.trim().toLowerCase();
+  document.querySelectorAll(".act").forEach(act=>{
+    let anyVisible=false;
+    act.querySelectorAll(".step").forEach(s=>{
+      const match=!q||s.dataset.txt.includes(q);
+      s.classList.toggle("hidden",!match);
+      if(match)anyVisible=true;
+    });
+    act.style.display=(q&&!anyVisible)?"none":"";
+    if(q)act.classList.remove("collapsed"); // arama sırasında hepsini aç
+  });
+  if(!q){ // arama bitince eski katlanmış hali geri getir
+    document.querySelectorAll(".act").forEach(act=>{
+      act.classList.toggle("collapsed",!!collapsed[+act.dataset.act]);
+    });
+  }
+}
+/* Font boyutu */
+let fs=parseInt(localStorage.getItem(KEY+"_fs")||"15");
+function applyFs(){document.documentElement.style.setProperty("--fs",fs+"px")}
+function fontSize(d){fs=Math.max(11,Math.min(24,fs+d));localStorage.setItem(KEY+"_fs",fs);applyFs()}
+applyFs();
+
+/* ============ OTOMATİK TIMER ============ */
+let running=false, remaining=0, tHandle=null, curSel=null, endAt=0;
+// endAt: sayaç sıfırlanacağı duvar-saati anı (arka planda sapmayı önler)
+function arm(){ endAt=Date.now()+remaining*1000; }
+// Timer durumunu kaydet (sayfa yenilense de devam etsin)
+function saveTimer(){try{localStorage.setItem(KEY+"_tmr",JSON.stringify({r:running,rem:Math.max(0,Math.round(remaining))}));}catch(e){}}
+
+/* ---- UZAMA SAYACI (duraklatınca: bu görev ne kadar uzadı?) — ileride kaldırılabilir ---- */
+let overStart=0, overHandle=null;
+function startOverrun(from){
+  overStart=from||Date.now();
+  try{localStorage.setItem(KEY+"_overstart",overStart);}catch(e){}   // yenilemede kaybolmasın
+  const el=document.getElementById("tover"); if(el)el.style.display="";
+  clearInterval(overHandle); overHandle=setInterval(updateOverrun,250); updateOverrun();
+}
+function stopOverrun(){
+  clearInterval(overHandle); overHandle=null; overStart=0;
+  try{localStorage.removeItem(KEY+"_overstart");}catch(e){}
+  const el=document.getElementById("tover"); if(el)el.style.display="none";
+}
+function updateOverrun(){
+  const el=document.getElementById("tover"); if(!el||!overStart)return;
+  el.innerHTML=`${T("overrun")} <b>+${fmtDur(Math.floor((Date.now()-overStart)/1000))}</b>`;
+}
+// Toplam uzama (tüm duraklamaların toplamı = hedeften sapma)
+let totalOverrun=parseInt(localStorage.getItem(KEY+"_overtot")||"0")||0;
+function saveOverTotal(){localStorage.setItem(KEY+"_overtot",totalOverrun);}
+function updateOverTotal(){
+  const el=document.getElementById("tovertot"); if(!el)return;
+  if(!totalOverrun){ el.innerHTML=""; el.classList.remove("ahead"); return; }
+  const sign = totalOverrun>0 ? "+" : "−";
+  el.classList.toggle("ahead", totalOverrun<0);   // negatif = öne geçti (yeşil)
+  el.innerHTML=`${T("overTotal")} <b>${sign}${fmtDur(Math.abs(totalOverrun))}</b>`;
+}
+function bankOverrun(){   // devam edince: bu duraklamanın süresini toplama ekle
+  if(overStart){ totalOverrun+=Math.max(0,Math.floor((Date.now()-overStart)/1000)); saveOverTotal(); updateOverTotal(); }
+}
+
+/* ---- Bildirim sesleri (Web Audio, dosyasız) ---- */
+let soundOn=localStorage.getItem(KEY+"_sound")!=="0", audioCtx=null;
+function ensureAudio(){
+  try{ if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){}
+  if(audioCtx&&audioCtx.state==="suspended") audioCtx.resume();
+}
+function tone(freq,startT,dur,type,gain){
+  if(!audioCtx)return;
+  const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+  o.type=type||"sine"; o.frequency.value=freq;
+  o.connect(g); g.connect(audioCtx.destination);
+  const t0=audioCtx.currentTime+startT;
+  g.gain.setValueAtTime(0.0001,t0);
+  g.gain.exponentialRampToValueAtTime(gain||0.25,t0+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+  o.start(t0); o.stop(t0+dur+0.03);
+}
+function playSound(kind){
+  if(!soundOn)return;
+  ensureAudio(); if(!audioCtx)return;
+  if(kind==="skill"){                 // 💎 gem/skill adımı: yükselen 3 notalı çınlama
+    tone(587.33,0,0.16,"triangle",0.32);   // D5
+    tone(880.00,0.14,0.16,"triangle",0.32); // A5
+    tone(1174.66,0.28,0.26,"triangle",0.34);// D6
+  }else if(kind==="pass"){            // 🌳 pasif hatırlatıcı: alçalan yumuşak çift nota
+    tone(523.25,0,0.18,"sine",0.26);       // C5
+    tone(392.00,0.16,0.34,"sine",0.26);    // G4
+  }else{                              // normal görev: kısa iki notalı "ding"
+    tone(880,0,0.12,"sine",0.28);          // A5
+    tone(1318.51,0.10,0.20,"sine",0.28);   // E6
+  }
+}
+function toggleSound(){
+  soundOn=!soundOn;
+  localStorage.setItem(KEY+"_sound",soundOn?"1":"0");
+  const b=document.getElementById("sndbtn");
+  if(b)b.textContent=soundOn?"🔔":"🔕";
+  if(soundOn){ensureAudio();playSound("task");}  // açınca örnek ses
+}
+
+// İlk tamamlanmamış adım {ai,si,el,dur}
+function currentStep(){
+  for(let ai=0;ai<DATA.length;ai++){
+    for(let si=0;si<DATA[ai].steps.length;si++){
+      if(!state[id(ai,si)]){
+        const el=document.querySelector(`.step[data-act="${ai}"][data-step="${si}"]`);
+        const dur=el?(+el.dataset.est||stepSec(trOf(ai,si),ai,false,false)):150;
+        return {ai,si,el,dur};
+      }
+    }
+  }
+  return null;
+}
+function fmtLong(sec){const h=Math.floor(sec/3600),m=Math.round((sec%3600)/60);return h?`${h}s ${m}dk`:`${m} dk`;}
+// Kalan tüm görevlerin toplam süresi
+function totalETA(){
+  let sum=0;
+  document.querySelectorAll(".step:not(.done)").forEach(e=>sum+=(+e.dataset.est||0));
+  return sum;
+}
+function scrollToCurrent(cur){
+  if(!cur||!cur.el)return;
+  const act=cur.el.closest(".act");
+  if(act&&act.classList.contains("collapsed"))toggleAct(+act.dataset.act);
+  cur.el.scrollIntoView({behavior:"smooth",block:"center"});
+}
+function refreshTimerUI(){
+  const cur=currentStep();
+  const tnow=document.getElementById("tnow");
+  const tcount=document.getElementById("tcount");
+  const tprog=document.getElementById("tprog");
+  const bar=document.getElementById("tprogbar");
+  const eta=document.getElementById("teta");
+  if(!cur){
+    tnow.textContent=T("allDone");
+    tcount.textContent="--:--";tcount.classList.remove("low");
+    tprog.classList.remove("low");bar.style.width="0%";
+    eta.innerHTML="";stopTimer();return;
+  }
+  const txt=dispText(cur.ai,cur.si).replace(/<[^>]+>/g,"");
+  tnow.innerHTML=`<b style="color:#f0d9a0">${DATA[cur.ai].title}</b> · ${txt}`;
+  if(!running && remaining<=0) remaining=cur.dur;
+  tcount.textContent=fmtDur(remaining);
+  const low=remaining<=15;
+  tcount.classList.toggle("low",low);
+  tprog.classList.toggle("low",low);
+  bar.style.width=Math.max(0,Math.min(100,remaining/cur.dur*100))+"%";
+  eta.innerHTML=`${T("eta")}<b>${fmtLong(totalETA())}</b>`;
+  saveTimer();
+}
+function startTimer(){
+  const cur=currentStep();
+  if(!cur){refreshTimerUI();return;}
+  if(remaining<=0)remaining=cur.dur;
+  running=true;
+  ensureAudio();          // kullanıcı tıklamasıyla sesi hazırla
+  arm();
+  const btn=document.getElementById("tbtn");
+  btn.textContent=T("pause");btn.classList.add("running");
+  scrollToCurrent(cur);
+  clearInterval(tHandle);
+  tHandle=setInterval(tick,1000);
+  refreshTimerUI();
+}
+function stopTimer(){
+  if(running) remaining=Math.max(0,Math.round((endAt-Date.now())/1000)); // duraklarken kalanı sabitle
+  running=false;clearInterval(tHandle);tHandle=null;
+  const btn=document.getElementById("tbtn");
+  if(btn){btn.textContent=T("autoStart");btn.classList.remove("running");}
+  saveTimer();
+}
+function toggleTimer(){
+  if(running){ stopTimer(); startOverrun(); refreshTimerUI(); }  // duraklat → uzama sayacı başlar
+  else { bankOverrun(); stopOverrun(); startTimer(); }          // devam et → süreyi toplama ekle, sayacı durdur
+}
+function tick(){
+  // Kalanı duvar-saatinden hesapla (arka planda throttle olsa da doğru kalır)
+  remaining=Math.max(0,Math.round((endAt-Date.now())/1000));
+  if(endAt-Date.now()<=0){ completeCurrent(); return; }
+  refreshTimerUI();
+}
+// Süre doldu (veya Atla): şu anki görevi tamamla ve sonrakine geç
+function completeCurrent(fromSkip){
+  const cur=currentStep();
+  if(!cur){stopTimer();refreshTimerUI();return;}
+  if(fromSkip){   // erken atlandı → kalan süreyi toplam sapmadan düş (öne geçme)
+    const leftover = running ? Math.max(0,(endAt-Date.now())/1000) : Math.max(0,remaining);
+    if(leftover>=1){ totalOverrun-=Math.round(leftover); saveOverTotal(); updateOverTotal(); }
+  }
+  state[id(cur.ai,cur.si)]=true;
+  save();
+  applyDoneUI(cur.ai,cur.si);
+  const next=currentStep();
+  remaining=next?next.dur:0;
+  arm();
+  if(next && (running||fromSkip)){
+    // sıradaki adım pasif mi / gem mi / normal mi → sese göre
+    const kind = passOf(next.ai,next.si)!=null ? "pass" : (gemOf(next.ai,next.si)?"skill":"task");
+    playSound(kind);
+    scrollToCurrent(next);
+  }
+  refreshTimerUI();
+  if(!next) stopTimer();
+}
+// Manuel işaretleme sonrası timer'ı hizala (şu anki görev değiştiyse süreyi sıfırla)
+function syncTimer(){
+  const cur=currentStep();
+  const key=cur?id(cur.ai,cur.si):null;
+  if(key!==curSel){ curSel=key; remaining=cur?cur.dur:0; if(running)arm(); }
+  refreshTimerUI();
+}
+function skipCurrent(){ completeCurrent(true); }
+function addTime(s){ remaining+=s; if(running)endAt+=s*1000; totalOverrun+=s; saveOverTotal(); updateOverTotal(); refreshTimerUI(); }
+const TARGETS=[180,210,240,270,300,360,420];
+function fmtHours(min){const h=min/60,n=(Number.isInteger(h)?h:h.toFixed(1));return lang==="en"?n+"h":n+" "+T("hours");}
+function buildPicker(){
+  const grid=document.getElementById("pgrid");if(!grid)return;
+  const d=UI[lang].descs;
+  grid.innerHTML=TARGETS.map((t,i)=>`<div class="pcard${t===270?' rec':''}${t===targetMin?' on':''}" data-t="${t}" onclick="pickTarget(${t})"><div class="ph">${fmtHours(t)}</div><div class="pd">${d[i]}</div>${t===270?`<div class="prec">${T("recommended")}</div>`:""}</div>`).join("");
+}
+function applyLang(){
+  document.documentElement.lang=lang;
+  const S=(el,v)=>{const e=document.getElementById(el);if(e)e.textContent=v;};
+  S("ttl",T("title"));
+  const lb=document.getElementById("langbtn");if(lb)lb.textContent=lang==="tr"?"🌐 English":"🌐 Türkçe";
+  S("btnGoNow",T("goNow"));
+  const se=document.getElementById("search");if(se)se.placeholder=T("search");
+  S("btnExpand",T("expand"));S("btnCollapse",T("collapse"));S("btnReset",T("reset"));
+  S("btnExport",T("backupExport"));S("btnImport",T("backupImport"));
+  S("lgV",T("legendV"));S("lgG",T("legendG"));S("lgN",T("legendN"));
+  S("btnAdd",T("addTime"));S("btnSkip",T("skip"));
+  S("tbtn",running?T("pause"):T("autoStart"));
+  const tb=document.getElementById("tgtbtn");if(tb)tb.textContent=T("target")+fmtHours(targetMin);
+  const ft=document.getElementById("footer");if(ft)ft.innerHTML=T("footer");
+  S("pkTitle",T("pickTitle"));S("pkSub",T("pickSub"));
+  S("pkCustom",T("custom"));S("pkUnit",T("unit"));S("pkApply",T("apply"));S("pkClose",T("close"));
+  buildPicker();
+}
+function toggleLang(){
+  lang=lang==="tr"?"en":"tr";
+  localStorage.setItem("poe_guide_lang",lang);
+  applyLang();render();refreshTimerUI();
+}
+function setTarget(min){
+  min=Math.max(90,Math.min(1200,Math.round(+min)||270));
+  targetMin=min;localStorage.setItem(KEY+"_target",min);
+  applyTarget();            // tempo yeniden hesaplanır
+  const btn=document.getElementById("tgtbtn");if(btn)btn.textContent=T("target")+fmtHours(min);
+  buildPicker();
+  render();                 // süre etiketleri & data-est yeniden hesaplanır
+  const cur=currentStep();
+  remaining=cur?cur.dur:0;  // yeni sürelere göre sıfırla
+  curSel=cur?id(cur.ai,cur.si):null;
+  if(running)arm();
+  refreshTimerUI();
+}
+function openPicker(){document.getElementById("picker").classList.remove("hidden");}
+function closePicker(){document.getElementById("picker").classList.add("hidden");}
+function pickTarget(min){ if(!min&&min!==0)return; setTarget(min); closePicker(); }
+
+const firstTime=localStorage.getItem(KEY+"_target")===null;
+render();
+applyLang();   // tüm statik arayüz metinlerini + picker'ı dile göre doldur
+buildGemDatalist();   // dropdown gem veritabanını doldur
+// timer durumunu geri yükle (sayfa yenilense de devam etsin)
+const savedTmr=JSON.parse(localStorage.getItem(KEY+"_tmr")||"null");
+const savedOverStart=parseInt(localStorage.getItem(KEY+"_overstart")||"0")||0;
+{const c=currentStep();curSel=c?id(c.ai,c.si):null;remaining=(savedTmr&&savedTmr.rem>0)?savedTmr.rem:(c?c.dur:0);}
+if(savedTmr&&savedTmr.r&&currentStep()){ stopOverrun(); startTimer(); }  // çalışıyordu → kaldığı yerden devam
+else { refreshTimerUI(); if(savedOverStart) startOverrun(savedOverStart); }  // duraklamışsa uzama kaldığı yerden sürsün
+// ses düğmesi başlangıç durumu + kayıtlı toplam sapma
+{const sb=document.getElementById("sndbtn");if(sb)sb.textContent=soundOn?"🔔":"🔕";}
+updateOverTotal();
+// sekme tekrar görünür olunca sayacı anında senkronla (arka plan throttle sonrası)
+document.addEventListener("visibilitychange",()=>{ if(running&&!document.hidden)tick(); });
+// ilk açılışta (hedef henüz seçilmemişse) seçim ekranını göster
+if(firstTime)openPicker();
+</script>
