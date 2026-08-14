@@ -1,6 +1,7 @@
 # ⚔ PoE Leveling — Acts
 
 Adress: https://ecthell.github.io/POE-LEVELING/
+Kılavuz: https://ecthell.github.io/POE-LEVELING/kilavuz.html
 
 **Türkçe** · Path of Exile (Act 1–10) köylerini adım adım takip eden, çift dilli (TR/EN) bir topluluk yardımcı aracı. İkinci ekranında açık dururken o an ne yapman gerektiğini gösterir; otomatik sayaç seni görevden göreve geçirir. Gem alma ve pasif ağaç planını da hatırlatır.
 
